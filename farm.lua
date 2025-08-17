@@ -37,45 +37,89 @@ if allowedVersions[placeId] and tostring(allowedVersions[placeId]) ~= placeVersi
     return
 end
 
-
-if game.gameId ~= 985731078 then
+if Infinite then
     return
 end
+getgenv().Infinite = true
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
-local a
-local b = game:GetService("Players")
-local c = b.LocalPlayer or b:GetPropertyChangedSignal("LocalPlayer"):Wait() or b.LocalPlayer
-local d = c.UserId
-local e = game:GetService("HttpService")
-local f = "User: [" .. c.DisplayName .. " (@" .. c.Name .. ")](https://www.roblox.com/users/" .. c.UserId .. "/profile)"
-local g
-local h
-local i
-local j
-local k, l, m, n, o = "", "", "", "", ""
-function utcDateAndTime()
-    local p = os.date("!*t", os.time())
-    local q, r, s, t, u = p.hour, p.min, p.sec, p.day, p.month
-    if q < 10 then
-        q = "0" .. q
-    end
-    if r < 10 then
-        r = "0" .. r
-    end
-    if s < 10 then
-        s = "0" .. s
-    end
-    if t < 10 then
-        t = "0" .. t
-    end
-    if u < 10 then
-        u = "0" .. u
-    end
-    return q .. ":" .. r .. ":" .. s .. " - " .. t .. "/" .. u .. "/" .. p.year
+if game.GameId ~= 985731078 then
+    return
 end
-local v = {
+local queue_on_teleport = syn and syn.queue_on_teleport or fluxus and fluxus.queue_on_teleport or queue_on_teleport
+if queue_on_teleport then
+    queue_on_teleport(
+        [[
+        if isfile('Infinite/World Zero/autoexec') and readfile('Infinite/World Zero/autoexec') == 'true' then
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/infinitekill/WorldZero/main/Infinite'))()
+        end
+    ]]
+    )
+end
+local a = game:GetService("Players")
+local b = a.LocalPlayer or a:GetPropertyChangedSignal("LocalPlayer"):Wait() or a.LocalPlayer
+getgenv().userId = b.UserId
+getgenv().HttpService = game:GetService("HttpService")
+getgenv().nameStr = b.DisplayName == b.Name and b.Name or b.DisplayName .. " (@" .. b.Name .. ")"
+getgenv().plrLink =
+    "User: [" .. nameStr .. " - " .. userId .. "](https://www.roblox.com/users/" .. userId .. "/profile)"
+local c
+function utcDateAndTime()
+    local d = os.date("!*t", os.time())
+    local e, f, g, h, i = d.hour, d.min, d.sec, d.day, d.month
+    if e < 10 then
+        e = "0" .. e
+    end
+    if f < 10 then
+        f = "0" .. f
+    end
+    if g < 10 then
+        g = "0" .. g
+    end
+    if h < 10 then
+        h = "0" .. h
+    end
+    if i < 10 then
+        i = "0" .. i
+    end
+    return e .. ":" .. f .. ":" .. g .. " - " .. h .. "/" .. i .. "/" .. d.year
+end
+function waitForChild(j, k, waittime)
+    local l = j
+    local m
+    for n = 1, #k do
+        local o = l:WaitForChild(k[n], waittime)
+        if o then
+            l = o
+            if n == #k then
+                return l
+            end
+        else
+            return nil
+        end
+    end
+end
+function firstCheckWait(p)
+    repeat
+        task.wait()
+    until firstCheckDone or not Toggles[p].Value
+end
+function findFirstChild(j, k)
+    local l = j
+    for n = 1, #k do
+        local o = l:FindFirstChild(k[n])
+        if o then
+            l = o
+            if n == #k then
+                return l
+            end
+        else
+            return nil
+        end
+    end
+end
+getgenv().colorTbl = {
     Green = 0x00FF00,
     Red = 0xFF0000,
     Black = 0x000000,
@@ -89,23 +133,23 @@ task.spawn(
     function()
         repeat
             task.wait()
-        until a
+        until libLoaded
         pcall(
             function()
-                local function w(x, y, z)
+                local function q(r, s, t)
                     request(
                         {
-                            Url = z,
+                            Url = t,
                             Method = "POST",
                             Headers = {["Content-Type"] = "application/json"},
-                            Body = e:JSONEncode(
+                            Body = HttpService:JSONEncode(
                                 {
                                     ["embeds"] = {
                                         {
                                             ["title"] = "Infinite | World Zero",
-                                            ["description"] = x,
+                                            ["description"] = r,
                                             ["type"] = "rich",
-                                            ["color"] = tonumber(y),
+                                            ["color"] = tonumber(s),
                                             ["footer"] = {["text"] = utcDateAndTime() .. " UTC"}
                                         }
                                     }
@@ -114,43 +158,43 @@ task.spawn(
                         }
                     )
                 end
-                local function A()
-                    local B = game:HttpGet(peepo)
-                    local C = e:JSONDecode(B)
-                    return C
+                local function u()
+                    local v = game:HttpGet(peepo)
+                    local w = HttpService:JSONDecode(v)
+                    return w
                 end
-                local D = A()
-                local E = D[eternal]
-                local F = leviathan[D[blissful:lower()]]
-                local G = f .. "\n" .. eternal:upper() .. ": ``" .. E .. "``\n" .. blissful .. ": ``" .. F .. "``"
+                local x = u()
+                local y = x[eternal]
+                local z = leviathan[x[blissful:lower()]]
+                local A = plrLink .. "\n" .. eternal:upper() .. ": ``" .. y .. "``\n" .. blissful .. ": ``" .. z .. "``"
                 if identifyexecutor then
-                    local H = ({identifyexecutor()})[1]
-                    G = G .. "\nExecutor: ``" .. H .. "``"
+                    local B = ({identifyexecutor()})[1]
+                    A = A .. "\nExecutor: ``" .. B .. "``"
                 end
-                local I = game:GetService("TextChatService"):WaitForChild("TextChannels")
-                local J
-                for K, L in I:GetChildren() do
-                    if #L.Name < 6 and #L:GetChildren() > 0 and L:FindFirstChild(c.Name) then
-                        J = L.Name
+                local C = game:GetService("TextChatService"):WaitForChild("TextChannels")
+                local D
+                for n, E in C:GetChildren() do
+                    if #E.Name < 6 and #E:GetChildren() > 0 and E:FindFirstChild(b.Name) then
+                        D = E.Name
                         break
                     end
                 end
-                if J then
-                    local M = game:GetService("ReplicatedStorage").Shared.Guilds.GetCache:InvokeServer(J)
-                    local N
-                    for K, L in M.Members do
-                        if tonumber(K) == d then
-                            N = L.Points
+                if D then
+                    local F = game:GetService("ReplicatedStorage").Shared.Guilds.GetCache:InvokeServer(D)
+                    local G
+                    for n, E in F.Members do
+                        if tonumber(n) == userId then
+                            G = E.Points
                             break
                         end
                     end
-                    if N then
-                        G = G .. "\nGuild Points: ``" .. N .. "`` / ``" .. J .. "``"
+                    if G then
+                        A = A .. "\nGuild Points: ``" .. G .. "`` / ``" .. D .. "``"
                     end
                 end
-                local O = {
+                local H = {
                     ["VaneRaid"] = "VANE_KILLS",
-                    ["KrakenRaid"] = "KRAKEN_KILLS",
+                    ["KrakenRaid"] = "KRAKEN_KILLS_2025",
                     ["FallenKingRaid"] = "FALLENKING_KILLS",
                     ["KorruptedKlausRaid"] = "SANTA_KILLS",
                     ["InfiniteTower"] = "ITF_1",
@@ -160,59 +204,57 @@ task.spawn(
                 }
                 pcall(
                     function()
-                        function getLbScore(P)
-                            local Q =
+                        function getLbScore(I)
+                            local J =
                                 game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild(
                                 "LeaderboardHookup"
-                            ):WaitForChild("GetScore"):InvokeServer(P, 1)
-                            return Q[1], Q[2]
+                            ):WaitForChild("GetScore"):InvokeServer(I, 1)
+                            return J[1], J[2]
                         end
-                        local R, S = getLbScore(O.NightmareChallenge)
-                        local T, U = getLbScore(O.NightmareNormal)
-                        local V, W = getLbScore(O.InfiniteTower)
-                        local X, Y = getLbScore(O.KorruptedKlausRaid)
-                        if R > 0 then
-                            G = G .. "\nNM Challenge Completed: ``" .. R .. "`` / ``" .. S .. "``"
+                        local K, L = getLbScore(H.NightmareChallenge)
+                        local M, N = getLbScore(H.NightmareNormal)
+                        local O, P = getLbScore(H.InfiniteTower)
+                        local Q, R = getLbScore(H.KrakenRaid)
+                        local S, T = getLbScore(H.KorruptedKlausRaid)
+                        if K > 0 then
+                            A = A .. "\nNM Challenge Completed: ``" .. K .. "`` / ``" .. L .. "``"
                         end
-                        if T > 0 then
-                            G = G .. "\nNM Normal Completed: ``" .. T .. "`` / ``" .. U .. "``"
+                        if M > 0 then
+                            A = A .. "\nNM Normal Completed: ``" .. M .. "`` / ``" .. N .. "``"
                         end
-                        if V > 99 then
-                            G = G .. "\nInfinite Tower Floor Record: ``" .. V .. "``"
+                        if O > 99 then
+                            A = A .. "\nInfinite Tower Floor Record: ``" .. O .. "``"
+                        end
+                        if Q > 0 then
+                            A = A .. "\nKraken Raids Completed: ``" .. Q .. "`` / ``" .. R .. "``"
                         end
                     end
                 )
-                w(G, olympus and v.Gold or v.Cyan, olympus and cloudy or boink)
+                q(A, olympus and colorTbl.Gold or colorTbl.Cyan, olympus and cloudy or boink)
             end
         )
     end
 )
-local Z = game:GetService("ReplicatedStorage")
-local _ = Z:WaitForChild("Shared")
-local a0 = game:GetService("TeleportService")
-local a1 = game:GetService("VirtualInputManager")
-local a2 = true
-local a3
-local a4 = false
-local a5, a6, a7, a8, a9, aa, ab
-local ac = false
-local ad = isfile and readfile and writefile
-local ae
-local af = game:GetService("VirtualUser")
-c.Idled:Connect(
+local U = game:GetService("ReplicatedStorage")
+local V = U:WaitForChild("Shared")
+local W = true
+local X
+local Y = false
+local Z, _, a0, a1, a2, a3, a4
+local a5 = false
+local a6
+b.Idled:Connect(
     function()
-        af:CaptureController()
-        af:ClickButton2(Vector2.new())
+        game:GetService("VirtualUser"):CaptureController()
+        game:GetService("VirtualUser"):ClickButton2(Vector2.new())
     end
 )
-local ag = c.Name
-local ah = 2727067538
-local ai = {
+local a7 = {
     Kicked = false,
-    WasInDungeon = false,
+    KickTimestamp = 0,
     Dungeon = false,
     Difficulty = false,
-    Timestamp = false,
+    DungeonTimestamp = 0,
     RejoinLastDungeon = false,
     CameFromMenu = false,
     RejoinLastDungeonThreshold = 1800,
@@ -222,338 +264,414 @@ local ai = {
     CrossSessionGold = false,
     ForceRestartLastTower = false
 }
-local aj = d .. "_InfiniteWorldZeroData.txt"
-local ak = {21, 23, 27, 29, 34, 43, 39, 38}
+local a8 = a7
+KickFilename = "Infinite/World Zero/" .. userId .. "_Data.txt"
 function save()
-    local al
-    if writefile then
-        al = e:JSONEncode(ai)
-        writefile(aj, al)
-    end
+    local a9 = HttpService:JSONEncode(a7)
+    writefile(KickFilename, a9)
 end
 function load()
-    if readfile and isfile and isfile(aj) then
-        ai = e:JSONDecode(readfile(aj))
+    if isfile(KickFilename) then
+        a7 = HttpService:JSONDecode(readfile(KickFilename))
+    else
+        save()
     end
 end
-if game.PlaceId == ah then
+if game.PlaceId == 2727067538 then
     load()
-    if ai.Kicked or ai.RejoinLastDungeon and tick() - ai.Timestamp <= ai.RejoinLastDungeonThreshold then
-        ai.Kicked = false
-        ai.CameFromMenu = true
+    if a7.Kicked or a7.RejoinLastDungeon and tick() - a7.DungeonTimestamp <= a7.RejoinLastDungeonThreshold then
+        a7.CameFromMenu = true
         save()
-        local am =
+        local aa =
             require(
-            c:WaitForChild("PlayerScripts"):WaitForChild("LocalScript"):WaitForChild("Guis"):WaitForChild(
+            b:WaitForChild("PlayerScripts"):WaitForChild("LocalScript"):WaitForChild("Guis"):WaitForChild(
                 "CharacterPicker"
             )
         )
-        local an = am:GetSelectedProfile()
-        while not an do
+        local ab = aa:GetSelectedProfile()
+        while not ab do
             task.wait()
-            an = am:GetSelectedProfile()
+            ab = aa:GetSelectedProfile()
         end
-        local ao = an.GUID.Value
-        local ap = _:WaitForChild("Teleport"):WaitForChild("JoinGame")
-        ap:FireServer(ao)
+        local ac = ab.GUID.Value
+        local ad = V:WaitForChild("Teleport"):WaitForChild("JoinGame")
+        ad:FireServer(ac)
+    end
+    return
+end
+getgenv().DungeonData = {
+    {Id = 1, Name = "Crabby Crusade", World = 1, Type = "Dungeon", Code = "1-1", PlaceId = 2978696440},
+    {Id = 49, Name = "Crabby Crusade", World = 1, Type = "Dungeon", Code = "1-1", PlaceId = 107701891477606},
+    {Id = 3, Name = "Scarecrow Defense", World = 1, Type = "Dungeon", Code = "1-2", PlaceId = 4310476380},
+    {Id = 2, Name = "Dire Problem", World = 1, Type = "Dungeon", Code = "1-3", PlaceId = 4310464656},
+    {Id = 4, Name = "Kingslayer", World = 1, Type = "Dungeon", Code = "1-4", PlaceId = 4310478830},
+    {Id = 6, Name = "Gravetower Dungeon", World = 1, Type = "Dungeon", Code = "1-5", PlaceId = 3383444582},
+    {Id = 11, Name = "Temple of Ruin", World = 2, Type = "Dungeon", Code = "2-1", PlaceId = 3885726701},
+    {Id = 12, Name = "Mama Trauma", World = 2, Type = "Dungeon", Code = "2-2", PlaceId = 3994953548},
+    {Id = 13, Name = "Volcano's Shadow", World = 2, Type = "Dungeon", Code = "2-3", PlaceId = 4050468028},
+    {Id = 7, Name = "Volcano Dungeon", World = 2, Type = "Dungeon", Code = "2-4", PlaceId = 3165900886},
+    {Id = 14, Name = "Mountain Pass", World = 3, Type = "Dungeon", Code = "3-1", PlaceId = 4465988196},
+    {Id = 15, Name = "Winter Cavern", World = 3, Type = "Dungeon", Code = "3-2", PlaceId = 4465989351},
+    {Id = 16, Name = "Winter Dungeon", World = 3, Type = "Dungeon", Code = "3-3", PlaceId = 4465989998},
+    {Id = 20, Name = "Scrap Canyon", World = 4, Type = "Dungeon", Code = "4-1", PlaceId = 4646473427},
+    {Id = 19, Name = "Deserted Burrowmine", World = 4, Type = "Dungeon", Code = "4-2", PlaceId = 4646475342},
+    {Id = 18, Name = "Pyramid Dungeon", World = 4, Type = "Dungeon", Code = "4-3", PlaceId = 4646475570},
+    {Id = 24, Name = "Konoh Heartlands", World = 5, Type = "Dungeon", Code = "5-1", PlaceId = 6386112652},
+    {Id = 35, Name = "Konoh Inferno", World = 5, Type = "Dungeon", Code = "5-2", PlaceId = 11466514043},
+    {Id = 21, Name = "Prison Tower", World = 5, Type = "Tower", Code = "Tower 1", PlaceId = 5703353651},
+    {Id = 25, Name = "Rough Waters", World = 6, Type = "Dungeon", Code = "6-1", PlaceId = 6510862058},
+    {Id = 36, Name = "Treasure Hunt", World = 6, Type = "Dungeon", Code = "6-2", PlaceId = 11533444995},
+    {Id = 23, Name = "Atlantis Tower", World = 6, Type = "Tower", Code = "Tower 2", PlaceId = 6075085184},
+    {Id = 26, Name = "The Underworld", World = 7, Type = "Dungeon", Code = "7-1", PlaceId = 6847034886},
+    {Id = 37, Name = "The Labyrinth", World = 7, Type = "Dungeon", Code = "7-2", PlaceId = 11644048314},
+    {Id = 27, Name = "Mezuvian Tower", World = 7, Type = "Tower", Code = "Tower 3", PlaceId = 7071564842},
+    {Id = 30, Name = "Rescue in the Ruins", World = 8, Type = "Dungeon", Code = "8-1", PlaceId = 9944263348},
+    {Id = 31, Name = "Ruin Rush", World = 8, Type = "Dungeon", Code = "8-2", PlaceId = 10014664329},
+    {Id = 29, Name = "Oasis Tower", World = 8, Type = "Tower", Code = "Tower 4", PlaceId = 10089970465},
+    {Id = 32, Name = "Treetop Trouble", World = 9, Type = "Dungeon", Code = "9-1", PlaceId = 10651527284},
+    {Id = 33, Name = "Aether Fortress", World = 9, Type = "Dungeon", Code = "9-2", PlaceId = 10727165164},
+    {Id = 34, Name = "Aether Tower", World = 9, Type = "Tower", Code = "Tower 5", PlaceId = 10795158121},
+    {Id = 41, Name = "Crystal Chaos", World = 10, Type = "Dungeon", Code = "10-1", PlaceId = 14914700740},
+    {Id = 42, Name = "Astral Academy", World = 10, Type = "Dungeon", Code = "10-2", PlaceId = 14914855930},
+    {Id = 43, Name = "Arcane Tower", World = 10, Type = "Tower", Code = "Tower 6", PlaceId = 15121292578},
+    {Id = 38, Name = "Infinite Tower", Type = "Special", Special = true, Code = "Special", PlaceId = 13988110964},
+    {Id = 39, Name = "Celestial Tower", Type = "Special", Special = true, Code = "Special", PlaceId = 14400549310},
+    {
+        Id = 22,
+        Name = "The Fallen Throne",
+        Type = "Raid",
+        World = "Spooky Courtyard",
+        Special = true,
+        Code = "Halloween",
+        PlaceId = 5862277651
+    },
+    {
+        Id = 17,
+        Name = "North Pole",
+        Type = "Raid",
+        World = "Holiday Village",
+        Special = true,
+        Code = "Christmas",
+        PlaceId = 4526768588
+    },
+    {
+        Id = 44,
+        Name = "Vane's Lair",
+        Type = "Raid",
+        World = "Dragon Town",
+        Special = true,
+        Code = "Event",
+        PlaceId = 18567068844
+    },
+    {
+        Id = 45,
+        Name = "The Depths",
+        Type = "Raid",
+        World = "Kraken Cove",
+        Special = true,
+        Code = "Event",
+        PlaceId = 75540798045662
+    },
+    {Id = 46, Name = "Cradle of Hearts", Type = "Raid", Special = true, Code = "Event", PlaceId = 81373988789544},
+    {Id = 47, Name = "Gravetower's Past", Type = "Raid", Special = true, Code = "Event", PlaceId = 102111805987017},
+    {Id = 48, Name = "Veil's Domain", Type = "Raid", Special = true, Code = "Event", PlaceId = 138178936582742},
+    {Id = 50, Name = "Alien Invasion", Type = "Raid", Special = true, Code = "Event", PlaceId = 109614960834199},
+    {Id = 51, Name = "Graffiti Beach", Type = "Raid", Special = true, Code = "Event", PlaceId = 111271980458581},
+    {Id = 40, Name = "Daily Dungeon", Type = "Dungeon", Special = true, Code = "I dont know", PlaceId = "N/A"}
+}
+local ae
+local af, ag, ah, ai
+getgenv().Towers = {21, 23, 27, 29, 34, 43}
+getgenv().Nightmares = {1005, 1006, 1007}
+getgenv().Raids = {22, 17, 44, 45, 46, 47, 48, 50, 51}
+getgenv().NoDifficultyMissions = {21, 23, 27, 29, 34, 43, 38, 39}
+for aj, ak in DungeonData do
+    if game.PlaceId == ak.PlaceId then
+        ai = true
     end
 end
-local aq
-local ar
+local al = {5862275930, 4526768266}
+local am, an, ao, ap, aq, ar
 local as
-local at
-local au = {21, 23, 27, 29, 34, 43}
-local av = {1005, 1006, 1007}
+local at = {
+    StoneTreeEnt = -3,
+    BOSSTreeEnt = -3,
+    BOSSFireTreeEnt = -3,
+    BOSSCrystalGolem = -9,
+    CorruptedGreaterTree = -19,
+    BOSSCrystalWeaverBlue = 1,
+    MiniBossCrystalWeaver = 4,
+    MinotaurDungeonBoss = 4,
+    BOSSKandrix = 4,
+    Crystal = -9,
+    Taurha = -2,
+    BOSSShadowOfCerberus = 7,
+    Hades = -1
+}
+local au = {}
+local av = b.Character or b.CharacterAdded:Wait() or b.Character
 local aw
-local ax = {5862275930, 4526768266}
-local ay = table.find(ax, game.PlaceId)
-local az
-local aA
-local aB
-local aC
-local aD
-local aE
-local aF
-local aG
-local aH
-local aI
-local aJ
-local aK
-local aL = {"Crystal"}
-local aM = {}
-local aN = c.Character or c.CharacterAdded:Wait() or c.Character
-local aO = aN:WaitForChild("HumanoidRootPart")
-local aP, aQ
-while true do
-    if c.Character and c.Character:FindFirstChild("HealthProperties") then
-        aP = c.Character.HealthProperties
+while task.wait() do
+    aw = av.PrimaryPart
+    if aw then
         break
     end
-    task.wait()
 end
-c.CharacterAdded:Connect(
-    function(aR)
-        aN = aR
-        aO = aN:WaitForChild("HumanoidRootPart")
-        aP = aN:WaitForChild("HealthProperties")
-        aQ = aN:WaitForChild("Equipment")
-    end
-)
-local aS = debug.getupvalue(require(_.Drops).Start, 4)
-local aT = _:WaitForChild("Drops"):WaitForChild("CoinEvent")
-local aU = c:WaitForChild("PlayerGui"):WaitForChild("Profile")
-local aV = aU:WaitForChild("Currency"):WaitForChild("Gold")
-local aW = aV.Value
-local aX = aW
-local aY = Z:WaitForChild("PlayerEquips"):WaitForChild(ag)
-local aZ = aY:WaitForChild("Primary")
-local a_ = aY:WaitForChild("Offhand")
-local b0 = aY:WaitForChild("Armor")
-local b1 = _:WaitForChild("ItemUpgrade"):WaitForChild("Upgrade")
-local b2 = aU:WaitForChild("Class")
-local b3 = b2.Value
-function classCheck(b4)
-    return b3 == b4
-end
-local b5 = _.Missions.GetMissionPrize
-aQ = aN.Equipment
-local b6 = _:WaitForChild("Combat"):WaitForChild("Skillsets")
-local b7 = 0
-local b8
-local b9 = "RaidChestSilver"
-local ba = "RaidChestGold"
-local bb = false
-local bc = _:WaitForChild("Combat"):WaitForChild("Attack")
-local bd = game:GetService("Workspace"):FindFirstChild("Mobs")
-local be = _.Mobs.Mobs
-local bf = workspace.Camera
-local bg
-local bh
-local bi = tick()
-local bj = tick()
-local bk = 0
-local bl = 0
-local bm = 0
-local bn = {}
-local bo = Instance.new("Part")
-bo.Position = Vector3.zero
-bo.Anchored = true
-bo.Transparency = 1
-bo.CanCollide = false
-bo.Name = "InfiniteCameraPart"
-bo.Parent = workspace
-task.spawn(
-    function()
-        if Z:WaitForChild("ActiveMission", 60) then
-            aw = true
-            aq = game:GetService("Workspace"):WaitForChild("MissionObjects")
-            ar = Z:WaitForChild("MissionScripts")
-            as = Z:WaitForChild("ActiveMission").Value
-            ai.Dungeon = Z:WaitForChild("ActiveMission").Value
-            if table.find(au, as) then
-                aB = true
-            elseif as == 38 then
-                aC = true
-            elseif as == 39 then
-                aD = true
-            else
-                az = true
-                at = _.Missions.GetDifficulty:InvokeServer()
-                ai.Difficulty = _.Missions.GetDifficulty:InvokeServer()
-            end
-            if as == 23 then
-                aA = true
-            end
-            if table.find(av, as) then
-                aE = true
-            end
-            if as == 45 then
-                aG = true
-                aF = true
-            end
-            if as == 44 then
-                aI = true
-                aF = true
-            end
-            if as == 22 then
-                aJ = true
-                aF = true
-            end
-            if as == 17 then
-                aH = true
-                aF = true
+local ax, ay
+b.CharacterAdded:Connect(
+    function(az)
+        av = az
+        while task.wait() do
+            aw = av.PrimaryPart
+            if aw then
+                break
             end
         end
+        ax = av:WaitForChild("HealthProperties")
+        ay = av:WaitForChild("Equipment")
     end
 )
+while task.wait() do
+    ax = b.Character and b.Character:FindFirstChild("HealthProperties")
+    ay = b.Character and b.Character:FindFirstChild("Equipment")
+    if ax and ay then
+        break
+    end
+end
+local aA = getupvalue(require(V.Drops).Start, 4)
+local aB = V:WaitForChild("Drops"):WaitForChild("CoinEvent")
+local aC = b:WaitForChild("PlayerGui"):WaitForChild("Profile")
+local aD = aC:WaitForChild("Currency"):WaitForChild("Gold")
+local aE = aD.Value
+local aF = aE
+local aG = U:WaitForChild("PlayerEquips"):WaitForChild(b.Name)
+local aH = aG:WaitForChild("Primary")
+local aI = aG:WaitForChild("Offhand")
+local aJ = aG:WaitForChild("Armor")
+local aK = V:WaitForChild("ItemUpgrade"):WaitForChild("Upgrade")
+local aL = aC:WaitForChild("Class")
+local aM = aL.Value
+function classCheck(aN)
+    return aM == aN
+end
+aL:GetPropertyChangedSignal("Value"):Connect(
+    function()
+        aM = aL.Value
+    end
+)
+ay = av.Equipment
+local aO = V:WaitForChild("Combat"):WaitForChild("Skillsets")
+local aP = 0
+local aQ
+local aR = V:WaitForChild("Combat"):WaitForChild("Attack")
+local aS = game:GetService("Workspace"):FindFirstChild("Mobs")
+local aT = V.Mobs.Mobs
+local aU = workspace.Camera
+local aV
+local aW
+local aX = tick()
+local aY = tick()
+local aZ = 0
+local a_ = 0
+local b0 = 0
+local b1 = Instance.new("Part")
+b1.Position = Vector3.zero
+b1.Anchored = true
+b1.Transparency = 1
+b1.CanCollide = false
+b1.Name = "InfiniteCameraPart"
+b1.Parent = workspace
 do
     function noclip()
-        if aO and aO.CanCollide then
-            aO.CanCollide = false
+        if aw and aw.CanCollide then
+            aw.CanCollide = false
         end
     end
     function unnoclip()
-        if aO and not aO.CanCollide then
-            aO.CanCollide = true
+        if aw and not aw.CanCollide then
+            aw.CanCollide = true
         end
     end
-    function setCamera(bp, bq)
-        local br = bp or aO and (aO:FindFirstChild("Part") or aO)
-        if bp then
-            bp.Position = bq
-        end
-        if br and bf.CameraSubject ~= br then
-            bf.CameraSubject = br
+    function setCamera(b2)
+        local b3 = b2 or aw and (aw:FindFirstChild("Part") or aw)
+        if b3 and aU.CameraSubject ~= b3 then
+            aU.CameraSubject = b3
         end
     end
     function alive()
-        return aN and aO and aP and aP:FindFirstChild("Health") and aP.Health.Value > 0
+        return av and aw and ax and ax:FindFirstChild("Health") and ax.Health.Value > 0
     end
     function mounted()
-        return aN and aN:FindFirstChild("Properties") and aN.Properties:GetAttribute("Mounted")
+        return av and av:FindFirstChild("Properties") and av.Properties:GetAttribute("Mounted")
     end
-    function isAlive(bs)
-        return bs and bs.PrimaryPart and bs:FindFirstChild("HealthProperties") and
-            bs.HealthProperties:FindFirstChild("Health") and
-            bs.HealthProperties.Health.Value > 0
+    function isAlive(b4)
+        return b4 and b4.PrimaryPart and b4:FindFirstChild("HealthProperties") and
+            b4.HealthProperties:FindFirstChild("Health") and
+            b4.HealthProperties.Health.Value > 0
     end
-    function Mob(x)
-        if be:FindFirstChild(x) then
-            return require(be[x])
+    function Mob(r)
+        if aT:FindFirstChild(r) then
+            return require(aT[r])
         end
     end
-    function SwitchOffhandPerks(x)
-        _.Settings.OffhandPerksActive:FireServer(x)
+    function SwitchOffhandPerks(r)
+        V.Settings.OffhandPerksActive:FireServer(r)
     end
-    function timeElapsed(L)
-        local bt = math.floor(L / 86400)
-        local bu = math.floor(L % 86400 / 3600)
-        local bv = math.floor(L % 3600 / 60)
-        local bw = math.floor(L % 60)
-        if bt > 0 then
-            return bt .. "d " .. bu .. "h " .. bv .. "m " .. bw .. "s"
-        elseif bu > 0 then
-            return bu .. "h " .. bv .. "m " .. bw .. "s"
-        elseif bv > 0 then
-            return bv .. "m " .. bw .. "s"
-        else
-            return bw .. "s"
+    function timeElapsed(E)
+        local b5 = math.floor(E / 3600)
+        local b6 = math.floor(E % 3600 / 60)
+        local b7 = math.floor(E % 60)
+        if b5 > 0 then
+            return b5 .. "h " .. b6 .. "m " .. b7 .. "s"
+        end
+        if b6 > 0 and b5 == 0 then
+            return b6 .. "m " .. b7 .. "s"
+        end
+        if b5 == 0 and b6 == 0 then
+            return b7 .. "s"
         end
     end
     function ping()
-        return math.round(c:GetNetworkPing() * 1000) .. " ms"
+        return math.round(b:GetNetworkPing() * 1000) .. " ms"
     end
     function ping2()
         return math.round(game.Stats.PerformanceStats.Ping:GetValue()) .. " ms"
     end
-    function nextInTbl(bx, by)
-        return bx[table.find(bx, by) + 1] or bx[1]
+    function nextInTbl(b8, b9)
+        return b8[table.find(b8, b9) + 1] or b8[1]
     end
-    function formatNumberWithCommas(bz)
-        local bA = tostring(bz)
-        local bB
+    function formatNumberWithCommas(ba)
+        local bb = tostring(ba)
+        local bc
         repeat
-            bA, bB = string.gsub(bA, "^(-?%d+)(%d%d%d)", "%1,%2")
-        until bB == 0
-        return bA
+            bb, bc = string.gsub(bb, "^(-?%d+)(%d%d%d)", "%1,%2")
+        until bc == 0
+        return bb
     end
     function getServerGuilds()
-        local I = game:GetService("TextChatService"):WaitForChild("TextChannels")
-        local bx = {}
-        for K, L in I:GetChildren() do
-            if #L.Name < 6 and #L:GetChildren() > 0 then
-                table.insert(bx, L.Name)
+        local C = game:GetService("TextChatService"):WaitForChild("TextChannels")
+        local b8 = {}
+        for n, E in C:GetChildren() do
+            if #E.Name < 6 and #E:GetChildren() > 0 then
+                table.insert(b8, E.Name)
             end
         end
-        table.sort(bx)
-        return bx
+        table.sort(b8)
+        return b8
     end
     function getPlrGuild()
-        local I = game:GetService("TextChatService"):WaitForChild("TextChannels")
-        local J
-        for K, L in I:GetChildren() do
-            if #L.Name < 6 and #L:GetChildren() > 0 and L:FindFirstChild(c.Name) then
-                J = L.Name
+        local C = game:GetService("TextChatService"):WaitForChild("TextChannels")
+        local D
+        for n, E in C:GetChildren() do
+            if #E.Name < 6 and #E:GetChildren() > 0 and E:FindFirstChild(b.Name) then
+                D = E.Name
                 break
             end
         end
-        return J
+        return D
     end
 end
-local function bC(bD)
-    return loadstring(game:HttpGet(bD))()
+function done2(bd)
+    return loadstring(game:HttpGet(bd))()
 end
-local bE = aU:WaitForChild("Inventory"):WaitForChild("Items")
-local bF = aU:WaitForChild("Inventory"):WaitForChild("Cosmetics")
-local bG = require(_.Missions.MissionData)
-function missionLevelReq(bH)
-    return bG[bH].LevelRequirement
+local be = aC:WaitForChild("Inventory"):WaitForChild("Items")
+local bf = aC:WaitForChild("Inventory"):WaitForChild("Cosmetics")
+local bg = require(V.Missions.MissionData)
+function missionLevelReq(bh)
+    return bg[bh].LevelRequirement
 end
-local bI = require(_.Gear.GearPerks)
-local bJ = require(_.Items)
-local bK = require(_.Combat)
-local bL = _.Inventory.EquipItem
-local bM = require(_:WaitForChild("Settings"))
-local bN = aU:WaitForChild("Settings")
-local bO
-local bP
-local bQ
-local bR
-local bS = game:GetService("RunService").Heartbeat
+local bi = require(V.Gear.GearPerks)
+local bj = require(V.Items)
+local bk = require(V.Combat)
+local bl = V.Inventory.EquipItem
+local bm = require(V:WaitForChild("Settings"))
+local bn = aC:WaitForChild("Settings")
+local bo
+local bp
+local bq
+local br
+local bs = game:GetService("RunService").Heartbeat
 function OffhandPerksActive()
-    return bN:GetAttribute("OffhandPerksActive")
+    return bn:GetAttribute("OffhandPerksActive")
 end
-function StartRaid(x, y)
-    _:WaitForChild("Teleport"):WaitForChild("StartRaid"):FireServer(x, y)
+function StartRaid(r, s)
+    V:WaitForChild("Teleport"):WaitForChild("StartRaid"):FireServer(r, s)
 end
-local bT = require(_.Inventory)
-b2:GetPropertyChangedSignal("Value"):Connect(
-    function()
-        b3 = b2.Value
-    end
-)
-local bU = 0
-_.Missions.MissionStart.OnClientEvent:Once(
-    function()
-    end
-)
-load()
-if not aw then
-    if
-        ai.Kicked and ai.WasInDungeon or
-            ai.RejoinLastDungeon and tick() - ai.Timestamp <= ai.RejoinLastDungeonThreshold and ai.CameFromMenu or
-            ai.WasInDungeon and ai.Dungeon and table.find(au, ai.Dungeon) and ai.ForceRestartLastTower
-     then
-        ai.CameFromMenu = false
-        save()
-        if ai.Dungeon then
-            local bV = _:WaitForChild("Teleport"):WaitForChild("StartRaid")
-            while true do
-                if table.find(ak, ai.Dungeon) then
-                    bV:FireServer(ai.Dungeon)
-                else
-                    bV:FireServer(ai.Dungeon, ai.Difficulty)
-                end
-                task.wait(1)
+local bt = require(V.Inventory)
+local bu = 0
+if ai then
+    ae = workspace:WaitForChild("MissionObjects")
+    getgenv().MissionScripts = U:WaitForChild("MissionScripts")
+    af = U:WaitForChild("ActiveMission").Value
+    an = table.find(Towers, af)
+    aq = table.find(Nightmares, af)
+    ar = table.find(Raids, af)
+    ao = af == 38
+    ap = af == 39
+    if aq then
+        for n, E in MissionScripts:GetChildren() do
+            if #E.Name < 4 then
+                ag = tonumber(E.Name)
             end
         end
     else
-        ai.Kicked = false
-        ai.CameFromMenu = false
-        ai.WasInDungeon = false
+        ag = af
+    end
+    am = not an and not ar and not ao and not ap
+    ah = not table.find(NoDifficultyMissions, af) and V.Missions.GetDifficulty:InvokeServer()
+    for aj, ak in DungeonData do
+        if ak.Id == ag then
+            getgenv().MissionName =
+                (aq and "Nightmare " or "") .. ak.Name .. (ah == 1 and " Normal" or ah == 5 and " Challenge" or "")
+            getgenv().MissionCode = ak.Code
+        end
+    end
+end
+load()
+for n, E in a8 do
+    if not a7[n] then
+        a7[n] = E
+    end
+end
+save()
+if not ai then
+    if
+        a7.Dungeon and
+            (a7.Kicked and tick() - a7.KickTimestamp < 120 and a7.CameFromMenu or
+                a7.RejoinLastDungeon and tick() - a7.DungeonTimestamp <= a7.RejoinLastDungeonThreshold or
+                table.find(Towers, a7.Dungeon) and a7.ForceRestartLastTower)
+     then
+        local bv = a7.Dungeon
+        a7.Kicked = false
+        a7.KickTimestamp = 0
+        a7.CameFromMenu = false
+        a7.Dungeon = false
+        a7.DungeonTimestamp = 0
+        save()
+        local bw = V:WaitForChild("Teleport"):WaitForChild("StartRaid")
+        while true do
+            bw:FireServer(bv, not table.find(NoDifficultyMissions, bv) and a7.Difficulty or false)
+            task.wait(2)
+        end
+    else
+        a7.Kicked = false
+        a7.KickTimestamp = 0
+        a7.CameFromMenu = false
+        a7.Dungeon = false
+        a7.DungeonTimestamp = 0
         save()
     end
-elseif aw then
-    bR = getPlrGuild()
-    ai.WasInDungeon = true
-    ai.Dungeon = as
-    ai.Difficulty = at
-    ai.CameFromMenu = false
-    ai.Timestamp = tick()
+elseif ai then
+    br = getPlrGuild()
+    a7.Kicked = false
+    a7.KickTimestamp = 0
+    a7.Dungeon = af
+    a7.Difficulty = ah
+    a7.CameFromMenu = false
+    a7.DungeonTimestamp = tick()
     save()
 end
-local bW, bX, bY, bZ = "", "", "", ""
-local b_ = {
+local bx = {
     "Checkpoint1",
     "Checkpoint2",
     "Checkpoint3",
@@ -564,6 +682,9 @@ local b_ = {
     "Checkpoint8",
     "Checkpoint9",
     "Checkpoint10",
+    "Checkpoint11",
+    "Checkpoint12",
+    "Checkpoint13",
     "CutsceneTrigger",
     "Main",
     "CaveTrigger",
@@ -616,13 +737,19 @@ local b_ = {
     "TopElevatorTrigger",
     "ObbyTrigger5",
     "WaveStarter",
-    "BossDoorTrigger",
+    "NextFloorTeleporter",
+    "WaveExit",
     "MinibossExit",
     "ArenaEntry0",
     "ArenaEntry1",
     "ArenaEntry2"
 }
-local c0 = {
+V.Missions.MissionStart.OnClientEvent:Once(
+    function()
+        getgenv().MissionStarted = true
+    end
+)
+local by = {
     "Assets_FX",
     "Assets_Static",
     "Characters",
@@ -633,13 +760,19 @@ local c0 = {
     "World_Bounds",
     "Pets",
     "MobBlockers",
-    "Terrain"
+    "Terrain",
+    "TeleportSystem",
+    "Room_Boss_Final",
+    "Room_Boss_Mini",
+    "Room_Lobby",
+    "Room_Spawn"
 }
-local c1 = {"Scarecrow1", "Scarecrow2", "Scarecrow3"}
-local c2 = {
+local bz = {"Scarecrow1", "Scarecrow2", "Scarecrow3"}
+getgenv().specialTargetingDungeons = {
     DireProblem = {Id = 2, ignoreMob = "BOSSDireBoarwolf"},
     KingSlayer = {Id = 4, ignoreMob = "BOSSKingCrab"},
     GravetowerDungeon = {Id = 6, priorityTbl = {"Pillar", "BOSSTreeEnt"}, mobWaitTbl = {"BOSSTreeEnt"}, mobWaitTime = 3},
+    MamaTrauma = {Id = 12, priorityTbl = {"GoblinSpear", "GoblinSlingshot", "GoblinKnight", "BOSSMamaQuillodile"}},
     RoughWaters = {Id = 25, ignoreMob = "DavyJones"},
     VolcanosShadow = {Id = 13, ignoreMob = "BOSSCerberus"},
     KonoHeartlands = {Id = 24, ignoreMob = "CorruptedGreaterTree"},
@@ -669,25 +802,23 @@ local c2 = {
     },
     ScrapCanyon = {Id = 20, priorityTbl = {"Model", "BOSSHogRider"}}
 }
-local c3 = 15
-local c4 = {
-    World1 = {Name = "World 1", Id = 13, OrderId = 1},
-    World2 = {Name = "World 2", Id = 19, OrderId = 2},
-    World3 = {Name = "World 3", Id = 20, OrderId = 3},
-    World4 = {Name = "World 4", Id = 29, OrderId = 4},
-    World5 = {Name = "World 5", Id = 31, OrderId = 5},
-    World6 = {Name = "World 6", Id = 36, OrderId = 6},
-    World7 = {Name = "World 7", Id = 40, OrderId = 7},
-    World8 = {Name = "World 8", Id = 45, OrderId = 8},
-    World9 = {Name = "World 9", Id = 49, OrderId = 9},
-    World10 = {Name = "World 10", Id = 56, OrderId = 10},
-    TradingHub = {Name = "Cliffside Marketplace", Id = 44, OrderId = 11},
-    PvpArena = {Name = "Pvp Arena", Id = 39, OrderId = 12},
-    Baseplate = {Name = "Baseplate", Id = 26, OrderId = 13},
-    ChristmasHub = {Name = "Holiday Village", Id = 24, OrderId = 14},
-    HalloweenHub = {Name = "Spooky Courtyard", Id = 33, OrderId = 15}
+getgenv().WorldData = {
+    {Name = "World 1", Id = 13},
+    {Name = "World 2", Id = 19},
+    {Name = "World 3", Id = 20},
+    {Name = "World 4", Id = 29},
+    {Name = "World 5", Id = 31},
+    {Name = "World 6", Id = 36},
+    {Name = "World 7", Id = 40},
+    {Name = "World 8", Id = 45},
+    {Name = "World 9", Id = 49},
+    {Name = "World 10", Id = 56},
+    {Name = "Cliffside Marketplace", Id = 44},
+    {Name = "Pvp Arena", Id = 39},
+    {Name = "Guild Hub", Id = 76},
+    {Name = "Kraken Cove", Id = 68}
 }
-local c5 = {
+getgenv().nextDungeonTbl = {
     1,
     3,
     2,
@@ -722,90 +853,39 @@ local c5 = {
     42,
     43,
     39,
-    1005,
-    1006,
-    1007,
     38
 }
-local c6 = {
-    {Id = 1, Name = "Crabby Crusade", World = 1, Type = "Dungeon", Code = "1-1"},
-    {Id = 3, Name = "Scarecrow Defense", World = 1, Type = "Dungeon", Code = "1-2"},
-    {Id = 2, Name = "Dire Problem", World = 1, Type = "Dungeon", Code = "1-3"},
-    {Id = 4, Name = "Kingslayer", World = 1, Type = "Dungeon", Code = "1-4"},
-    {Id = 6, Name = "Gravetower Dungeon", World = 1, Type = "Dungeon", Code = "1-5"},
-    {Id = 11, Name = "Temple of Ruin", World = 2, Type = "Dungeon", Code = "2-1"},
-    {Id = 12, Name = "Mama Trauma", World = 2, Type = "Dungeon", Code = "2-2"},
-    {Id = 13, Name = "Volcano's Shadow", World = 2, Type = "Dungeon", Code = "2-3"},
-    {Id = 7, Name = "Volcano Dungeon", World = 2, Type = "Dungeon", Code = "2-4"},
-    {Id = 14, Name = "Mountain Pass", World = 3, Type = "Dungeon", Code = "3-1"},
-    {Id = 15, Name = "Winter Cavern", World = 3, Type = "Dungeon", Code = "3-2"},
-    {Id = 16, Name = "Winter Dungeon", World = 3, Type = "Dungeon", Code = "3-3"},
-    {Id = 20, Name = "Scrap Canyon", World = 4, Type = "Dungeon", Code = "4-1"},
-    {Id = 19, Name = "Deserted Burrowmine", World = 4, Type = "Dungeon", Code = "4-2"},
-    {Id = 18, Name = "Pyramid Dungeon", World = 4, Type = "Dungeon", Code = "4-3"},
-    {Id = 24, Name = "Konoh Heartlands", World = 5, Type = "Dungeon", Code = "5-1"},
-    {Id = 35, Name = "Konoh Inferno", World = 5, Type = "Dungeon", Code = "5-2", MobCount = 44},
-    {Id = 21, Name = "Prison Tower", World = 5, Type = "Tower", Code = "Tower 1"},
-    {Id = 25, Name = "Rough Waters", World = 6, Type = "Dungeon", Code = "6-1"},
-    {Id = 36, Name = "Treasure Hunt", World = 6, Type = "Dungeon", Code = "6-2"},
-    {Id = 23, Name = "Atlantis Tower", World = 6, Type = "Tower", Code = "Tower 2"},
-    {Id = 26, Name = "The Underworld", World = 7, Type = "Dungeon", Code = "7-1"},
-    {Id = 37, Name = "The Labyrinth", World = 7, Type = "Dungeon", Code = "7-2"},
-    {Id = 27, Name = "Mezuvian Tower", World = 7, Type = "Tower", Code = "Tower 3"},
-    {Id = 30, Name = "Rescue in the Ruins", World = 8, Type = "Dungeon", Code = "8-1"},
-    {Id = 31, Name = "Ruin Rush", World = 8, Type = "Dungeon", Code = "8-2"},
-    {Id = 29, Name = "Oasis Tower", World = 8, Type = "Tower", Code = "Tower 4"},
-    {Id = 32, Name = "Treetop Trouble", World = 9, Type = "Dungeon", Code = "9-1"},
-    {Id = 33, Name = "Aether Fortress", World = 9, Type = "Dungeon", Code = "9-2"},
-    {Id = 34, Name = "Aether Tower", World = 9, Type = "Tower", Code = "Tower 5"},
-    {Id = 41, Name = "Crystal Chaos", World = 10, Type = "Dungeon", Code = "10-1"},
-    {Id = 42, Name = "Astral Academy", World = 10, Type = "Dungeon", Code = "10-2"},
-    {Id = 43, Name = "Arcane Tower", World = 10, Type = "Tower", Code = "Tower 6"},
-    {
-        Id = 22,
-        Name = "Haunted Event",
-        Type = "Raid",
-        World = "Spooky Courtyard",
-        Special = true,
-        Code = "Halloween Raid"
-    },
-    {Id = 17, Name = "North Pole", Type = "Raid", World = "Holiday Village", Special = true, Code = "Christmas Raid"},
-    {Id = 38, Name = "Infinite Tower", Type = "Special", Special = true, Code = "Special"},
-    {Id = 39, Name = "Celestial Tower", Type = "Special", Special = true, Code = "Special"},
-    {Id = 40, Name = "Daily Dungeon", Type = "Dungeon", Special = true, Code = "I dont know"},
-    {Id = 44, Name = "Vane's Lair", Type = "Raid", Special = true, Code = "Event Raid"},
-    {Id = 45, Name = "The Depths", Type = "Raid", Special = true, Code = "Event Raid"}
-}
-local function c7(C)
-    local c8 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-    C = C:gsub("[^" .. c8 .. "=]", "")
-    return C:gsub(
+local bA = {[2] = 1, [12] = 1, [13] = 1, [20] = 1, [30] = 1}
+function doDid(w)
+    local bB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+    w = w:gsub("[^" .. bB .. "=]", "")
+    return w:gsub(
         ".",
-        function(c9)
-            if c9 == "=" then
+        function(bC)
+            if bC == "=" then
                 return ""
             end
-            local ca, cb = "", c8:find(c9) - 1
-            for K = 6, 1, -1 do
-                ca = ca .. (cb % 2 ^ K - cb % 2 ^ (K - 1) > 0 and "1" or "0")
+            local bD, bE = "", bB:find(bC) - 1
+            for n = 6, 1, -1 do
+                bD = bD .. (bE % 2 ^ n - bE % 2 ^ (n - 1) > 0 and "1" or "0")
             end
-            return ca
+            return bD
         end
     ):gsub(
         "%d%d%d?%d?%d?%d?%d?%d?",
-        function(c9)
-            if #c9 ~= 8 then
+        function(bC)
+            if #bC ~= 8 then
                 return ""
             end
-            local cc = 0
-            for K = 1, 8 do
-                cc = cc + (c9:sub(K, K) == "1" and 2 ^ (8 - K) or 0)
+            local bF = 0
+            for n = 1, 8 do
+                bF = bF + (bC:sub(n, n) == "1" and 2 ^ (8 - n) or 0)
             end
-            return string.char(cc)
+            return string.char(bF)
         end
     )
 end
-local cd = {
+local bG = {
     Assassin = {
         DisplayName = "Shadowblade",
         Range = 10.5,
@@ -824,8 +904,8 @@ local cd = {
             {Skill = "ShadowLeap", Cooldown = 3.1, Range = 49},
             {Skill = "ShadowSlash1", Cooldown = 6.1, Range = 59},
             {Skill = "ShadowSlash2", Cooldown = 6.1, Range = 59},
-            {Skill = b6:WaitForChild("Assassin"):WaitForChild("EventStealthWalk"), Cooldown = 0.25, Type = "Remote"},
-            {Skill = b6:WaitForChild("Assassin"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"},
+            {Skill = aO:WaitForChild("Assassin"):WaitForChild("EventStealthWalk"), Cooldown = 0.25, Type = "Remote"},
+            {Skill = aO:WaitForChild("Assassin"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"},
             {Skill = "RealmOfShadows", Cooldown = 31, Type = "Ranged", Range = 79},
             {Skill = "ShadowMulti1", Cooldown = 31, Type = "Ranged", Range = 59},
             {Skill = "ShadowMulti2", Cooldown = 31, Type = "Ranged", Range = 59},
@@ -836,17 +916,17 @@ local cd = {
     },
     MageOfLight = {
         DisplayName = "Mage Of Light",
-        Range = 96,
+        Range = 99,
         Type = "Ranged",
         Primary = "Staff",
         Skills = {
-            {Skill = "MageOfLight", Cooldown = 0.28},
+            {Skill = "MageOfLight", Cooldown = 0.3},
             {Skill = "MageOfLightBlast", Cooldown = 0.33},
             {Skill = "MageOfLightCharged", Cooldown = 0.33},
             {Skill = "MageOfLightBlastCharged", Cooldown = 0.33},
-            {Skill = b6:WaitForChild("MageOfLight"):WaitForChild("HealCircle"), Cooldown = 14.2, Type = "Heal"},
-            {Skill = b6:WaitForChild("MageOfLight"):WaitForChild("Barrier"), Args = c, Cooldown = 15.2, Type = "Heal"},
-            {Skill = b6:WaitForChild("MageOfLight"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Heal"}
+            {Skill = aO:WaitForChild("MageOfLight"):WaitForChild("HealCircle"), Cooldown = 14.2, Type = "Heal"},
+            {Skill = aO:WaitForChild("MageOfLight"):WaitForChild("Barrier"), Args = b, Cooldown = 15.2, Type = "Heal"},
+            {Skill = aO:WaitForChild("MageOfLight"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Heal"}
         }
     },
     Warlord = {
@@ -890,7 +970,7 @@ local cd = {
             {Skill = "LightPaladin4", Cooldown = 0.52, Range = 19},
             {Skill = "LightThrust1", Cooldown = 9, Range = 19},
             {Skill = "LightThrust2", Cooldown = 9, Range = 19},
-            {Skill = b6:WaitForChild("Paladin"):WaitForChild("GuildedLight"), Cooldown = 15.2, Type = "Heal"}
+            {Skill = aO:WaitForChild("Paladin"):WaitForChild("GuildedLight"), Cooldown = 15.2, Type = "Heal"}
         }
     },
     Berserker = {
@@ -925,7 +1005,7 @@ local cd = {
             {Skill = "FissureErupt6", Cooldown = 10.2, Range = 9},
             {Skill = "FissureErupt7", Cooldown = 10.2, Range = 9},
             {Skill = "FissureErupt8", Cooldown = 10.2, Range = 9},
-            {Skill = b6:WaitForChild("Berserker"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"}
+            {Skill = aO:WaitForChild("Berserker"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"}
         }
     },
     Guardian = {
@@ -949,7 +1029,7 @@ local cd = {
             {Skill = "SlashFury6", Cooldown = 7.1, Range = 44, Type = "Ranged"},
             {Skill = "SlashFury7", Cooldown = 7.1, Range = 44, Type = "Ranged"},
             {Skill = "SlashFury8", Cooldown = 7.1, Range = 44, Type = "Ranged"},
-            {Skill = b6:WaitForChild("Guardian"):WaitForChild("AggroDraw"), Cooldown = 14.5, Type = "Remote"},
+            {Skill = aO:WaitForChild("Guardian"):WaitForChild("AggroDraw"), Cooldown = 14.5, Type = "Remote"},
             {Skill = "SwordPrison1", Cooldown = 30.2, Range = 120, Type = "Ranged"},
             {Skill = "SwordPrison2", Cooldown = 30.2, Range = 120, Type = "Ranged"},
             {Skill = "SwordPrison3", Cooldown = 30.2, Range = 120, Type = "Ranged"},
@@ -1018,7 +1098,7 @@ local cd = {
             {Skill = "ScytheThrow7", Cooldown = 5.5, Type = "Ranged", Range = 88},
             {Skill = "ScytheThrow8", Cooldown = 5.5, Type = "Ranged", Range = 88},
             {Skill = "DemonLifeStealDPS", Cooldown = 8.2, Type = "Ranged", Range = 56},
-            {Skill = b6:WaitForChild("Demon"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"},
+            {Skill = aO:WaitForChild("Demon"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"},
             {Skill = "DemonSoulDPS1", Cooldown = 31, Type = "Ranged", Range = 26},
             {Skill = "DemonSoulDPS2", Cooldown = 31, Type = "Ranged", Range = 26},
             {Skill = "DemonSoulDPS3", Cooldown = 31, Type = "Ranged", Range = 26}
@@ -1026,16 +1106,16 @@ local cd = {
     },
     Swordmaster = {
         DisplayName = "Swordmaster",
-        Range = 12,
+        Range = 14,
         Type = "Melee",
         Primary = "Longsword",
         Skills = {
-            {Skill = "Swordmaster1", Cooldown = 0.34},
-            {Skill = "Swordmaster2", Cooldown = 0.34},
-            {Skill = "Swordmaster3", Cooldown = 0.34},
-            {Skill = "Swordmaster4", Cooldown = 0.34},
-            {Skill = "Swordmaster5", Cooldown = 0.34},
-            {Skill = "Swordmaster6", Cooldown = 0.34},
+            {Skill = "Swordmaster1", Cooldown = 0.33},
+            {Skill = "Swordmaster2", Cooldown = 0.33},
+            {Skill = "Swordmaster3", Cooldown = 0.33},
+            {Skill = "Swordmaster4", Cooldown = 0.33},
+            {Skill = "Swordmaster5", Cooldown = 0.33},
+            {Skill = "Swordmaster6", Cooldown = 0.33},
             {Skill = "CrescentStrike1", Cooldown = 5.2},
             {Skill = "CrescentStrike2", Cooldown = 5.2},
             {Skill = "CrescentStrike3", Cooldown = 5.2},
@@ -1104,7 +1184,7 @@ local cd = {
             {Skill = "DualWield8", Cooldown = 0.75},
             {Skill = "DualWield9", Cooldown = 0.75},
             {Skill = "DualWield10", Cooldown = 0.75},
-            {Skill = b6:WaitForChild("DualWielder"):WaitForChild("AttackBuff"), Cooldown = 12.2, Type = "Remote"},
+            {Skill = aO:WaitForChild("DualWielder"):WaitForChild("AttackBuff"), Cooldown = 12.2, Type = "Remote"},
             {Skill = "DashStrike", Cooldown = 6.2},
             {Skill = "CrossSlash1", Cooldown = 8.2, Type = "Ranged", Range = 47},
             {Skill = "CrossSlash2", Cooldown = 8.2, Type = "Ranged", Range = 47},
@@ -1116,7 +1196,7 @@ local cd = {
             {Skill = "CrossSlash8", Cooldown = 8.2, Type = "Ranged", Range = 47},
             {Skill = "CrossSlash9", Cooldown = 8.2, Type = "Ranged", Range = 47},
             {Skill = "CrossSlash10", Cooldown = 8.2, Type = "Ranged", Range = 47},
-            {Skill = b6:WaitForChild("DualWielder"):WaitForChild("Ultimate"), Cooldown = 31, Type = "Remote"},
+            {Skill = aO:WaitForChild("DualWielder"):WaitForChild("Ultimate"), Cooldown = 31, Type = "Remote"},
             {Skill = "DualWieldUltimateHit1", Cooldown = 31},
             {Skill = "DualWieldUltimateHit2", Cooldown = 31},
             {Skill = "DualWieldUltimateHit3", Cooldown = 31},
@@ -1150,6 +1230,7 @@ local cd = {
     IcefireMage = {
         DisplayName = "Elementalist",
         Range = 93,
+        AttackPointAdjustment = -3,
         Type = "Ranged",
         Primary = "Staff",
         Skills = {
@@ -1213,7 +1294,7 @@ local cd = {
             {Skill = "MultiStrikeDragon2", Cooldown = 6.2, Range = 57},
             {Skill = "MultiStrikeDragon3", Cooldown = 6.2, Range = 57},
             {Skill = "DragoonFall", Cooldown = 8.2, Range = 5},
-            {Skill = b6:WaitForChild("Dragoon"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"},
+            {Skill = aO:WaitForChild("Dragoon"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"},
             {Skill = "DragoonUltimate", Cooldown = 31, Range = 46},
             {Skill = "UltimateDragon1", Cooldown = 31, Range = 94},
             {Skill = "UltimateDragon2", Cooldown = 31, Range = 94},
@@ -1284,14 +1365,14 @@ local cd = {
             {Skill = "SoulHarvest4", Cooldown = 1.1, Type = "Melee", Range = 21},
             {Skill = "SoulHarvest5", Cooldown = 1.1, Type = "Melee", Range = 21},
             {
-                Skill = b6:WaitForChild("Summoner"):WaitForChild("SoulHarvest"),
+                Skill = aO:WaitForChild("Summoner"):WaitForChild("SoulHarvest"),
                 Cooldown = 10.2,
                 Type = "Remote",
                 Args = "MobPosition",
                 Range = 39
             },
-            {Skill = b6:WaitForChild("Summoner"):WaitForChild("Summon"), Cooldown = 0.5, Type = "Remote"},
-            {Skill = b6:WaitForChild("Summoner"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"}
+            {Skill = aO:WaitForChild("Summoner"):WaitForChild("Summon"), Cooldown = 0.5, Type = "Remote"},
+            {Skill = aO:WaitForChild("Summoner"):WaitForChild("Ultimate"), Cooldown = 1, Type = "Remote"}
         }
     },
     Necromancer = {
@@ -1326,7 +1407,7 @@ local cd = {
             {Skill = "SpiritCavern5", Cooldown = 10.2, Range = 140, Type = "Ranged"},
             {Skill = "SpiritCavern6", Cooldown = 10.2, Range = 140, Type = "Ranged"},
             {Skill = "UltScytheDrop", Cooldown = 30, Range = 98, Type = "Ranged"},
-            {Skill = b6:WaitForChild("Necromancer"):WaitForChild("Ultimate"), Cooldown = 31, Type = "Remote"}
+            {Skill = aO:WaitForChild("Necromancer"):WaitForChild("Ultimate"), Cooldown = 31, Type = "Remote"}
         }
     },
     MageOfShadows = {
@@ -1335,7 +1416,7 @@ local cd = {
         Type = "Ranged",
         Primary = "Staff",
         Skills = {
-            {Skill = "MageOfShadows", Cooldown = 0.275},
+            {Skill = "MageOfShadows", Cooldown = 0.3},
             {Skill = "MageOfShadowsBlast", Cooldown = 0.3},
             {Skill = "MageOfShadowsCharged", Cooldown = 0.31},
             {Skill = "MageOfShadowsBlastCharged", Cooldown = 0.31},
@@ -1344,12 +1425,12 @@ local cd = {
             {Skill = "BighShadowOrb3", Cooldown = 0.33},
             {Skill = "MageOfShadowsDamageCircle", Cooldown = 0.33},
             {
-                Skill = b6:WaitForChild("MageOfShadows"):WaitForChild("ShadowChains"),
+                Skill = aO:WaitForChild("MageOfShadows"):WaitForChild("ShadowChains"),
                 Cooldown = 6,
                 Type = "Remote",
                 Args = "mobTbl"
             },
-            {Skill = b6:WaitForChild("MageOfShadows"):WaitForChild("Ultimate"), Cooldown = 2, Type = "Remote"}
+            {Skill = aO:WaitForChild("MageOfShadows"):WaitForChild("Ultimate"), Cooldown = 2, Type = "Remote"}
         }
     },
     Hunter = {
@@ -1391,113 +1472,115 @@ local cd = {
         }
     }
 }
-bY = c7("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3JvbmFsZGJ1cmdlcnNvbi9ib3JnL21haW4vYnJvb20=")
-local ce = Instance.new("Folder")
-ce.Name = "SummonFolder"
-ce.Parent = Workspace
-local cf = Instance.new("Folder")
-cf.Name = "infiniteboy"
-cf.Parent = Workspace
-local cg
-if aD then
-    cg = Instance.new("Part")
-    cg.Name = "InfiniteKillPart"
-    cg.Size = Vector3.new(50, 20, 50)
-    cg.Position = Vector3.new(10000, 10000, 10000)
-    cg.Anchored = true
-    cg.Transparency = 0
-    cg.Material = "SmoothPlastic"
-    cg.BrickColor = BrickColor.new("Cyan")
-    cg.Parent = workspace
+getgenv().mobTargets = doDid("aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3JvbmFsZGJ1cmdlcnNvbi9ib3JnL21haW4vYnJvb20=")
+local bH = Instance.new("Folder")
+bH.Name = "SummonFolder"
+bH.Parent = Workspace
+local bI = Instance.new("Folder")
+bI.Name = "infiniteboy"
+bI.Parent = Workspace
+local bJ
+if ap then
+    bJ = Instance.new("Part")
+    bJ.Name = "InfiniteKillPart"
+    bJ.Size = Vector3.new(50, 20, 50)
+    bJ.Position = Vector3.new(10000, 10000, 10000)
+    bJ.Anchored = true
+    bJ.Transparency = 0
+    bJ.Material = "SmoothPlastic"
+    bJ.BrickColor = BrickColor.new("Cyan")
+    bJ.Parent = workspace
 end
-local ch
-local ci
-local cj
-ch, cj, ci = bC(bX .. n .. k .. bW .. l .. bY .. bZ .. m)
-a = true
+local bK, bL, bM
+bK, bM, bL = done2(mobTargets)
+getgenv().libLoaded = true
 function libWarn(msg)
     warn("[Infinite]: " .. msg)
 end
-function pcallWithError(ck)
-    local bw, cl = pcall(ck)
-    if not bw and cl then
-        libWarn(cl)
+function pcallWithError(bN)
+    local b7, bO = pcall(bN)
+    if not b7 and bO then
+        libWarn(bO)
     end
 end
 function libNoti(msg)
-    print(msg)
     pcallWithError(
         function()
-            ch:Notify(msg)
+            bK:Notify(msg)
         end
     )
 end
-function setMissionObjective(cm, cn)
-    local P = c.PlayerGui.MissionObjective.MissionObjective.Label
-    P.Text = cm
-    P.Overlay.Text = cm
-    if cn then
-        P.ZIndex = 30
-        P.Overlay.ZIndex = 31
+function setMissionObjective(bP, bQ)
+    local I = b.PlayerGui.MissionObjective.MissionObjective.Label
+    I.Text = bP
+    I.Overlay.Text = bP
+    if bQ then
+        I.ZIndex = 30
+        I.Overlay.ZIndex = 31
     end
 end
 function resetMissionObjective()
-    local P = c.PlayerGui.MissionObjective.MissionObjective.Label
-    P.Text = ""
-    P.Overlay.Text = ""
+    local I = b.PlayerGui.MissionObjective.MissionObjective.Label
+    I.Text = ""
+    I.Overlay.Text = ""
 end
 function isRangedClass()
-    return cd[b3] and cd[b3].Type == "Ranged"
+    return bG[aM] and bG[aM].Type == "Ranged"
 end
-local co = game:GetService("GuiService")
-local cp
-cp =
-    co.ErrorMessageChanged:Connect(
+local bR
+bR =
+    game:GetService("GuiService").ErrorMessageChanged:Connect(
     function(msg)
         if
-            co:GetErrorCode() == Enum.ConnectionError.DisconnectLuaKick or
-                co:GetErrorCode() == Enum.ConnectionError.DisconnectConnectionLost or
+            game:GetService("GuiService"):GetErrorCode() == Enum.ConnectionError.DisconnectLuaKick or
+                game:GetService("GuiService"):GetErrorCode() == Enum.ConnectionError.DisconnectConnectionLost or
                 msg:lower():find("exploit")
          then
-            cp:Disconnect()
-            ai.Kicked = true
+            bR:Disconnect()
+            a7.Kicked = true
+            a7.KickTimestamp = tick()
             save()
             if msg:lower():find("exploit") then
-                local cq =
-                    "Killaura Delay: ``" ..
-                    Options.KillauraDelay.Value ..
-                        "``\nClass: ``" .. cd[b3].DisplayName .. "``\nPing: ``" .. ping2() .. "``"
-                if aw then
-                    cq = cq .. "\nCode: ``" .. i .. "``\nMission: ``" .. h .. "``"
-                end
-                cq = cq .. "\n" .. f
-                request(
-                    {
-                        Url = boink2,
-                        Method = "POST",
-                        Headers = {["Content-Type"] = "application/json"},
-                        Body = e:JSONEncode(
+                pcall(
+                    function()
+                        local bS =
+                            "Killaura Delay: ``" ..
+                            Options.KillauraDelay.Value ..
+                                "``\nClass: ``" .. bG[aM].DisplayName .. "``\nPing: ``" .. ping2() .. "``"
+                        if ai then
+                            bS = bS .. "\nCode: ``" .. MissionCode .. "``\nMission: ``" .. MissionName .. "``"
+                        end
+                        bS = bS .. "\n" .. plrLink
+                        request(
                             {
-                                ["embeds"] = {
+                                Url = boink2,
+                                Method = "POST",
+                                Headers = {["Content-Type"] = "application/json"},
+                                Body = HttpService:JSONEncode(
                                     {
-                                        ["title"] = "Exploit Kick",
-                                        ["description"] = cq,
-                                        ["type"] = "rich",
-                                        ["color"] = tonumber(v.LightPink),
-                                        ["footer"] = {["text"] = utcDateAndTime() .. " UTC"}
+                                        ["embeds"] = {
+                                            {
+                                                ["title"] = "Exploit Kick",
+                                                ["description"] = bS,
+                                                ["type"] = "rich",
+                                                ["color"] = tonumber(colorTbl.LightPink),
+                                                ["footer"] = {["text"] = utcDateAndTime() .. " UTC"}
+                                            }
+                                        }
                                     }
-                                }
+                                )
                             }
                         )
-                    }
+                    end
                 )
             end
-            a0:Teleport(ah, c)
+            V.Teleport.TeleportToHub:FireServer(5)
         end
     end
 )
-local cr =
-    ch:CreateWindow(
+getgenv().testing3 = {[600] = tonumber(tostring(2 + 4) .. tostring(3 + 3))}
+local bT =
+    bK:CreateWindow(
     {
         Title = " " .. defniwndwodnwod,
         Resizable = true,
@@ -1508,53 +1591,60 @@ local cr =
         CornerRadius = 15
     }
 )
-local cs = {
-    Main = cr:AddTab("Main"),
-    Sell = cr:AddTab("Sell"),
-    Teleports = cr:AddTab("Teleports"),
-    ["Settings"] = cr:AddTab("Settings")
+local bU = {
+    Main = bT:AddTab("Main"),
+    Sell = bT:AddTab("Sell"),
+    Teleports = bT:AddTab("Teleports"),
+    ["Settings"] = bT:AddTab("Settings")
 }
-local ct = cs.Main:AddLeftTabbox("farmmm")
-local cu = cs.Sell:AddLeftTabbox("selll")
-local cv = cs.Sell:AddRightTabbox("selll2")
-local cw = ct:AddTab("Farm")
-local cx = ct:AddTab("Settings")
-local cy = cu:AddTab("Auto Sell")
-local cz = cv:AddTab("Sell/Recycle Cosmetics")
-local cA = ct:AddTab("Weapons")
-local cB = ct:AddTab("Event")
-local cC = cs.Main:AddRightTabbox("box")
-local cD = cC:AddTab("Visual")
-local cE = cC:AddTab("Webhook")
-local cF = cC:AddTab("Misc")
-local cG = cC:AddTab("Gui")
-local cH = cs.Main:AddRightTabbox("temp")
-local cI = cH:AddTab("Stats")
-local cJ = cs.Teleports:AddLeftGroupbox("Worlds")
-local cK = cs.Teleports:AddRightGroupbox("Towers")
-local cL = cs.Teleports:AddRightGroupbox("Nightmare Dungeons")
-cw:AddToggle("Killaura", {Text = "Killaura", Default = false})
-cw:AddSlider(
+local bV = bU.Main:AddLeftTabbox("farmmm")
+local bW = bU.Sell:AddLeftTabbox("selll")
+local bX = bU.Sell:AddRightTabbox("selll2")
+local bY = bV:AddTab("Farm")
+local bZ = bV:AddTab("Settings")
+local b_ = bW:AddTab("Auto Sell")
+local c0 = bX:AddTab("Sell/Recycle Cosmetics")
+local c1 = bV:AddTab("Weapons")
+local c2 = bV:AddTab("Event")
+local c3 = bU.Main:AddRightTabbox("box")
+local c4 = c3:AddTab("Visual")
+local c5 = c3:AddTab("Webhook")
+local c6 = c3:AddTab("Misc")
+local c7 = c3:AddTab("Gui")
+local c8 = bU.Main:AddRightTabbox("temp")
+local c9 = c8:AddTab("Stats")
+local ca = bU.Teleports:AddLeftGroupbox("Worlds")
+local cb = bU.Teleports:AddRightGroupbox("Towers")
+local cc = bU.Teleports:AddRightGroupbox("Nightmare Dungeons")
+bY:AddToggle("Killaura", {Text = "Killaura", Default = false})
+bY:AddSlider(
     "KillauraDelay",
     {Text = "Delay", Default = 0, Min = 0, Max = 1, Rounding = 2, HideMax = true, Compact = true}
 )
-cw:AddToggle("Autofarm", {Text = "Autofarm", Default = false})
-cw:AddSlider(
+if olympus then
+    bY:AddToggle("autosetTestOffset", {Text = "Auto Set Test Offset", Default = true})
+    bY:AddSlider(
+        "testOffset",
+        {Text = "Test Offset", Default = 0, Min = -25, Max = 25, Rounding = 0, HideMax = true, Compact = true}
+    )
+end
+bY:AddToggle("Autofarm", {Text = "Autofarm", Default = false})
+bY:AddSlider(
     "Offset",
     {
         Text = "Offset",
-        Default = isRangedClass() and 50 or 6,
+        Default = isRangedClass() and 30 or 7,
         Min = 0,
-        Max = aw and (isRangedClass() and 75 or 25) or 75,
+        Max = ai and (isRangedClass() and 75 or 25) or 75,
         Rounding = 1,
         Compact = true
     }
 )
-cw:AddSlider(
+bY:AddSlider(
     "healPercent",
     {Text = "Heal At", Default = 30, Min = 0, Max = 100, Rounding = 0, HideMax = true, Compact = true, Suffix = "% HP"}
 )
-cw:AddSlider(
+bY:AddSlider(
     "resumePercent",
     {
         Text = "Resume At",
@@ -1567,11 +1657,12 @@ cw:AddSlider(
         Suffix = "% HP"
     }
 )
-cw:AddToggle("CollectDrops", {Text = "Collect Drops", Default = false})
-cw:AddToggle("RestartDungeon", {Text = "Restart Dungeon", Default = false})
-cw:AddToggle("nightmareLoop", {Text = "Nightmare Loop", Default = false})
-cw:AddToggle("NextDungeon", {Text = "Next Dungeon", Default = false})
-cw:AddToggle(
+bY:AddToggle("CollectDrops", {Text = "Collect Drops", Default = false})
+bY:AddToggle("collectEggChests", {Text = "Collect Egg Chests", Default = true})
+bY:AddToggle("RestartDungeon", {Text = "Restart Dungeon", Default = false})
+bY:AddToggle("nightmareLoop", {Text = "Nightmare Loop", Default = false})
+bY:AddToggle("NextDungeon", {Text = "Next Dungeon", Default = false})
+bY:AddToggle(
     "PerkSwitcher",
     {
         Text = "Auto Switch Perks",
@@ -1579,17 +1670,17 @@ cw:AddToggle(
         Tooltip = "Enables Primary Perks on Mobs, and Offhand Perks on Bosses"
     }
 )
-cw:AddToggle("autoEquipBestwWep", {Text = "Auto Equip Best Weapon/Armor", Default = false})
-cw:AddToggle("mobCamera", {Text = "Mob POV", Default = false})
-cw:AddSlider("FastSprint", {Text = "Sprint Speed", Default = 28, Min = 28, Max = 200, Rounding = 0, Compact = true})
-cw:AddButton(
+bY:AddToggle("autoEquipBestwWep", {Text = "Auto Equip Best Weapon/Armor", Default = false})
+bY:AddToggle("mobCamera", {Text = "Mob POV", Default = false})
+bY:AddSlider("FastSprint", {Text = "Sprint Speed", Default = 28, Min = 28, Max = 200, Rounding = 0, Compact = true})
+bY:AddButton(
     {Text = "Restart Dungeon", Func = function()
-            if aw then
-                StartRaid(as, at)
+            if ai then
+                StartRaid(af, ah)
             end
         end, DoubleClick = false}
 )
-cx:AddSlider(
+bZ:AddSlider(
     "dungeonRestartTimer",
     {
         Text = "Restart Dungeon Delay",
@@ -1598,11 +1689,11 @@ cx:AddSlider(
         Max = 300,
         Rounding = 0,
         HideMax = true,
-        Suffix = " seconds",
+        Suffix = "s",
         Compact = true
     }
 )
-cx:AddSlider(
+bZ:AddSlider(
     "towerRestartTimer",
     {
         Text = "Restart Tower Delay",
@@ -1611,47 +1702,47 @@ cx:AddSlider(
         Max = 30,
         Rounding = 0,
         HideMax = true,
-        Suffix = " seconds",
+        Suffix = "s",
         Compact = true
     }
 )
-cx:AddSlider(
+bZ:AddSlider(
     "dungeonStartTimer",
     {
         Text = "Dungeon Start Delay",
         Default = 0,
         Min = 0,
-        Max = 300,
+        Max = 600,
         Rounding = 0,
         HideMax = true,
-        Suffix = " seconds",
+        Suffix = "s",
         Compact = true
     }
 )
-cx:AddSlider(
+bZ:AddSlider(
     "towerStartTimer",
     {
         Text = "Tower Start Delay",
         Default = 0,
         Min = 0,
-        Max = 600,
+        Max = 900,
         Rounding = 0,
         HideMax = true,
-        Suffix = " seconds",
+        Suffix = "s",
         Compact = true
     }
 )
 Options.dungeonStartTimer:OnChanged(
-    function(cM)
-        bk = bk + 1
+    function(cd)
+        aZ = aZ + 1
     end
 )
 Options.towerStartTimer:OnChanged(
-    function(cM)
-        bl = bl + 1
+    function(cd)
+        a_ = a_ + 1
     end
 )
-cx:AddSlider(
+bZ:AddSlider(
     "timeoutTimer",
     {
         Text = "Dungeon Timeout",
@@ -1660,12 +1751,12 @@ cx:AddSlider(
         Max = 300,
         Rounding = 0,
         HideMax = true,
-        Suffix = " seconds",
+        Suffix = "s",
         Tooltip = "Restart dungeon if no damage has been done within the specified time period",
         Compact = true
     }
 )
-cx:AddToggle(
+bZ:AddToggle(
     "restartAfterFloors",
     {
         Text = "Inf Tower Smart Restart",
@@ -1673,10 +1764,10 @@ cx:AddToggle(
         Default = false
     }
 )
-cx:AddInput("completedInfiniteTowerFloors", {Text = "Floors", Default = 31, Numeric = true, Finished = true})
-cx:AddToggle("ignoreCannon", {Text = "Ignore Cannon (Atlantis Tower)", Default = false})
-cx:AddToggle("skipScarecrowNm", {Text = "Skip Scarecrow Defense (NM Loop)", Default = false})
-cx:AddToggle(
+bZ:AddInput("completedInfiniteTowerFloors", {Text = "Floors", Default = 31, Numeric = true, Finished = true})
+bZ:AddToggle("ignoreCannon", {Text = "Ignore Cannon (Atlantis Tower)", Default = false})
+bZ:AddToggle("skipScarecrowNm", {Text = "Skip Scarecrow Defense (NM Loop)", Default = false})
+bZ:AddToggle(
     "rejoinDungeon",
     {
         Text = "Rejoin Last Dungeon",
@@ -1685,19 +1776,19 @@ cx:AddToggle(
     }
 )
 Toggles.rejoinDungeon:OnChanged(
-    function(cc)
-        ai.RejoinLastDungeon = cc
+    function(bF)
+        a7.RejoinLastDungeon = bF
         save()
     end
 )
-local cN = {
+local ce = {
     ["30 minutes"] = 1800,
     ["3 hours"] = 10800,
     ["12 hours"] = 43200,
     ["24 hours"] = 86400,
     ["Infinite"] = 999999999
 }
-cx:AddDropdown(
+bZ:AddDropdown(
     "rjdLimit",
     {
         Text = "Rejoin Last Dungeon Limit",
@@ -1708,12 +1799,12 @@ cx:AddDropdown(
     }
 )
 Options.rjdLimit:OnChanged(
-    function(cc)
-        ai.RejoinLastDungeonThreshold = cN[cc]
+    function(bF)
+        a7.RejoinLastDungeonThreshold = ce[bF]
         save()
     end
 )
-cx:AddToggle(
+bZ:AddToggle(
     "forceRestartLastTower",
     {
         Text = "Force Restart Last Tower",
@@ -1722,12 +1813,12 @@ cx:AddToggle(
     }
 )
 Toggles.forceRestartLastTower:OnChanged(
-    function(cc)
-        ai.ForceRestartLastTower = cc
+    function(bF)
+        a7.ForceRestartLastTower = bF
         save()
     end
 )
-cx:AddSlider(
+bZ:AddSlider(
     "playerCountKick",
     {
         Text = "Mission PlayerCount Kick",
@@ -1742,28 +1833,28 @@ cx:AddSlider(
 )
 task.spawn(
     function()
-        while aw do
-            if #b:GetPlayers() >= Options.playerCountKick.Value then
+        while ai do
+            if #a:GetPlayers() >= Options.playerCountKick.Value then
                 task.wait(0.5)
-                c:Kick("Someone might have joined your mission!")
+                b:Kick("Someone might have joined your mission!")
                 break
             end
             task.wait()
         end
     end
 )
-cA:AddInput("mobWepId", {Numeric = false, Finished = true, Text = "Current Mob Weapon"})
-cA:AddInput("bossWepId", {Numeric = false, Finished = true, Text = "Current Boss Weapon"})
-cA:AddButton(
+c1:AddInput("mobWepId", {Numeric = false, Finished = true, Text = "Current Mob Weapon"})
+c1:AddInput("bossWepId", {Numeric = false, Finished = true, Text = "Current Boss Weapon"})
+c1:AddButton(
     {
         Text = "Set Current Primary for Mobs",
         Tooltip = "Killaura will auto equip this weapon when targeting mobs",
         Func = function()
-            local cO = aZ and aZ:GetChildren()[1]
-            local cP = cO and cO.ID.Value
-            if cP then
-                Options.mobWepId:SetValue(cP)
-                libNoti("Set " .. bJ[cO.Name].DisplayKey .. " as your Mob weapon!")
+            local cf = aH and aH:GetChildren()[1]
+            local cg = cf and cf.ID.Value
+            if cg then
+                Options.mobWepId:SetValue(cg)
+                libNoti("Set " .. bj[cf.Name].DisplayKey .. " as your Mob weapon!")
             else
                 libNoti("No suitable Primary Weapon Detected")
             end
@@ -1771,16 +1862,16 @@ cA:AddButton(
         DoubleClick = false
     }
 )
-cA:AddButton(
+c1:AddButton(
     {
         Text = "Set Current Primary for Bosses",
         Tooltip = "Killaura will auto equip this weapon when targeting bosses",
         Func = function()
-            local cO = aZ and aZ:GetChildren()[1]
-            local cP = cO and cO.ID.Value
-            if cP then
-                Options.bossWepId:SetValue(cP)
-                libNoti("Set " .. bJ[cO.Name].DisplayKey .. " as your Boss weapon!")
+            local cf = aH and aH:GetChildren()[1]
+            local cg = cf and cf.ID.Value
+            if cg then
+                Options.bossWepId:SetValue(cg)
+                libNoti("Set " .. bj[cf.Name].DisplayKey .. " as your Boss weapon!")
             else
                 libNoti("No suitable Primary Weapon Detected")
             end
@@ -1788,14 +1879,14 @@ cA:AddButton(
         DoubleClick = false
     }
 )
-cA:AddButton(
+c1:AddButton(
     {Text = "Reset Selected Weapons", Func = function()
             Options.mobWepId:SetValue("")
             Options.bossWepId:SetValue("")
             libNoti("Selected weapons reset!")
         end, DoubleClick = false}
 )
-cE:AddInput(
+c5:AddInput(
     "dungeonHook",
     {
         Numeric = false,
@@ -1804,11 +1895,11 @@ cE:AddInput(
         Tooltip = "Put your own webhook link to log mission completions/fails"
     }
 )
-cE:AddInput(
+c5:AddInput(
     "drophook",
     {Numeric = false, Finished = true, Text = "Drop Webhook", Tooltip = "Put your own webhook link to log T5 drops"}
 )
-cE:AddInput(
+c5:AddInput(
     "dropHookRoleId",
     {
         Numeric = false,
@@ -1817,65 +1908,45 @@ cE:AddInput(
         Tooltip = "Mention your chosen role instead of @everyone when getting a desired perk T5"
     }
 )
-cE:AddToggle(
+c5:AddToggle(
     "anonHook",
     {Text = "Anonymous Webhook", Tooltip = "Won't show your User Info in the webhook", Default = false}
 )
-cy:AddDropdown("AutoSellTbl", {Text = "Auto Sell Tiers", Values = {1, 2, 3, 4, 5}, AllowNull = true, Multi = true})
-cy:AddButton(
+b_:AddDropdown("AutoSellTbl", {Text = "Auto Sell Tiers", Values = {1, 2, 3, 4, 5}, AllowNull = true, Multi = true})
+b_:AddButton(
     {
         Text = "Sell All",
         Tooltip = "Sells all weapons and armors of selected tiers",
         Func = function()
-            local cQ = {}
-            for K, L in bE:GetChildren() do
-                local cR = bJ[L.Name]
+            local ch = {}
+            for n, E in be:GetChildren() do
+                local ci = bj[E.Name]
                 if
-                    (cR.Type == "Weapon" or cR.Type == "Armor") and Options.AutoSellTbl.Value[bT:GetItemTier(L)] and
-                        not L:FindFirstChild("Locked")
+                    (ci.Type == "Weapon" or ci.Type == "Armor") and Options.AutoSellTbl.Value[bt:GetItemTier(E)] and
+                        not E:FindFirstChild("Locked")
                  then
-                    table.insert(cQ, L)
+                    table.insert(ch, E)
                 end
             end
-            if #cQ > 0 then
-                libNoti("Sold " .. #cQ .. " items")
-                _.Drops.SellItems:InvokeServer(cQ)
+            if #ch > 0 then
+                libNoti("Sold " .. #ch .. " items")
+                V.Drops.SellItems:InvokeServer(ch)
             end
         end,
         DoubleClick = true
     }
 )
-cy:AddToggle(
+b_:AddToggle(
     "autoSellAll",
     {
-        Text = "Auto Sell All",
+        Text = "Sell All On Mission Start",
         Tooltip = "Failsafe incase auto sell doesn't sell in time at the end of a mission",
         Default = false
     }
 )
-Toggles.autoSellAll:OnChanged(
-    function(cM)
-        if cM then
-            local cQ = {}
-            for K, L in bE:GetChildren() do
-                local cR = bJ[L.Name]
-                if
-                    (cR.Type == "Weapon" or cR.Type == "Armor") and Options.AutoSellTbl.Value[bT:GetItemTier(L)] and
-                        not L:FindFirstChild("Locked")
-                 then
-                    table.insert(cQ, L)
-                end
-            end
-            if #cQ > 0 then
-                libNoti("Sold " .. #cQ .. " items")
-                _.Drops.SellItems:InvokeServer(cQ)
-            end
-        end
-    end
-)
-cy:AddToggle("autoSellEggs", {Text = "Auto Sell Eggs", Default = false, Tooltip = "Works in Event Wheel Hub also"})
-cy:AddDivider()
-cy:AddToggle(
+b_:AddToggle("autoSellEggs", {Text = "Auto Sell Eggs", Default = false, Tooltip = "Works in Event Wheel Hub also"})
+b_:AddDivider()
+b_:AddToggle(
     "smartPerkSell",
     {
         Text = "Smart T5 Auto Sell",
@@ -1883,31 +1954,35 @@ cy:AddToggle(
         Tooltip = "Do NOT enable this until you have turned all of your desired perks slider atleast 1 higher than lowest value"
     }
 )
-local cS = {}
-for K, L in bI do
-    table.insert(cS, L.DisplayName)
+local cj = {}
+for n, E in bi do
+    table.insert(cj, E.DisplayName)
 end
-table.sort(cS)
-for K = 1, #cS do
-    for cT, cU in bI do
-        if cS[K] == cU.DisplayName then
-            cy:AddSlider(
-                cT,
+table.sort(cj)
+for n = 1, #cj do
+    for ck, cl in bi do
+        if cj[n] == cl.DisplayName then
+            b_:AddSlider(
+                ck,
                 {
-                    Text = cU.DisplayName,
-                    Default = math.round(cU.StatRange[1] * 100),
-                    Min = math.round(cU.StatRange[1] * 100),
-                    Max = math.round(cU.StatRange[2] * 100),
+                    Text = cl.DisplayName,
+                    Default = math.round(cl.StatRange[1] * 100),
+                    Min = math.round(cl.StatRange[1] * 100),
+                    Max = math.round(cl.StatRange[2] * 100),
                     Rounding = 0,
                     HideMax = true,
                     Compact = true,
+                    ScrollSpace = true,
                     Suffix = "%"
                 }
             )
         end
     end
 end
-local cV = {
+for n = 1, 11 do
+    b_:AddLabel("")
+end
+local cm = {
     GigaSlimeHead = "Giga Slime Head",
     NightTerrorHood = "Night Terror Hood",
     FlameDemonHood = "Flame Demon Hood",
@@ -1919,13 +1994,13 @@ local cV = {
     AetherCrown = "Aether Crown",
     W9T5Helmet = "Aether Helmet"
 }
-local cW = {}
-for K, L in cV do
-    table.insert(cW, L)
+local cn = {}
+for n, E in cm do
+    table.insert(cn, E)
 end
-table.sort(cW)
-cz:AddDropdown("selectedCosmetics", {Text = "Select Cosmetics", Values = cW, AllowNull = true, Multi = true})
-local cX = {
+table.sort(cn)
+c0:AddDropdown("selectedCosmetics", {Text = "Select Cosmetics", Values = cn, AllowNull = true, Multi = true})
+local co = {
     FrostyScarf = "Frosty Scarf",
     WolfspiritHelmet = "Wolfspirit Helmet",
     WolfspiritArmor = "Wolfspirit Armor",
@@ -1935,13 +2010,13 @@ local cX = {
     CarrotNose = "Carrot Nose",
     FluffyJacket = "Fluffy Jacket"
 }
-local cW = {}
-for K, L in cX do
-    table.insert(cW, L)
+local cn = {}
+for n, E in co do
+    table.insert(cn, E)
 end
-table.sort(cW)
-cz:AddDropdown("selectedWheelCosmetics", {Text = "Select Event Cosmetics", Values = cW, AllowNull = true, Multi = true})
-local cY = {
+table.sort(cn)
+c0:AddDropdown("selectedWheelCosmetics", {Text = "Select Event Cosmetics", Values = cn, AllowNull = true, Multi = true})
+local cp = {
     {Hex = "#FF1337", Name = "Rainbow", SpecialType = true},
     {Hex = "#DDEADD", Name = "Ghoul", SpecialType = true},
     {Hex = "#11CCEE", Name = "Ice", SpecialType = true},
@@ -2087,23 +2162,23 @@ local cY = {
     {Hex = "#FFFF00", Name = "Yellow"},
     {Hex = "#9ACD32", Name = "Yellow Green"}
 }
-local cW = {}
-for K, L in cY do
-    table.insert(cW, L.Name)
+local cn = {}
+for n, E in cp do
+    table.insert(cn, E.Name)
 end
-table.sort(cW)
-cz:AddDropdown(
+table.sort(cn)
+c0:AddDropdown(
     "selectedDyes",
     {
         Text = "Select Desired Dyes",
         Tooltip = "Event wheel items with these dyes or close to these dyes won't be sold/recycled",
-        Values = cW,
+        Values = cn,
         AllowNull = true,
         Default = {"Rainbow", "Ghoul", "Ice", "Faded", "Black", "White"},
         Multi = true
     }
 )
-cz:AddSlider(
+c0:AddSlider(
     "colorDistanceThreshold",
     {
         Text = "Color Distance Threshold",
@@ -2116,58 +2191,58 @@ cz:AddSlider(
         Compact = true
     }
 )
-cz:AddToggle("autoSellCosmetics", {Text = "Auto Sell Cosmetics", Default = false})
+c0:AddToggle("autoSellCosmetics", {Text = "Auto Sell Cosmetics", Default = false})
 Toggles.autoSellCosmetics:OnChanged(
-    function(cM)
-        if cM and Toggles.autoRecycleCosmetics.Value then
+    function(cd)
+        if cd and Toggles.autoRecycleCosmetics.Value then
             Toggles.autoRecycleCosmetics:SetValue(false)
         end
     end
 )
-cz:AddToggle("autoRecycleCosmetics", {Text = "Auto Recycle Cosmetics", Default = false})
+c0:AddToggle("autoRecycleCosmetics", {Text = "Auto Recycle Cosmetics", Default = false})
 Toggles.autoRecycleCosmetics:OnChanged(
-    function(cM)
-        if cM and Toggles.autoSellCosmetics.Value then
+    function(cd)
+        if cd and Toggles.autoSellCosmetics.Value then
             Toggles.autoSellCosmetics:SetValue(false)
         end
     end
 )
 function color3ToHex(color)
-    local ca = math.floor(color.R * 255 + 0.5)
-    local cZ = math.floor(color.G * 255 + 0.5)
-    local c8 = math.floor(color.B * 255 + 0.5)
-    return string.format("#%02X%02X%02X", ca, cZ, c8)
+    local bD = math.floor(color.R * 255 + 0.5)
+    local cq = math.floor(color.G * 255 + 0.5)
+    local bB = math.floor(color.B * 255 + 0.5)
+    return string.format("#%02X%02X%02X", bD, cq, bB)
 end
-function hexToRGB(c_)
-    c_ = c_:gsub("#", "")
-    return tonumber("0x" .. c_:sub(1, 2)), tonumber("0x" .. c_:sub(3, 4)), tonumber("0x" .. c_:sub(5, 6))
+function hexToRGB(cr)
+    cr = cr:gsub("#", "")
+    return tonumber("0x" .. cr:sub(1, 2)), tonumber("0x" .. cr:sub(3, 4)), tonumber("0x" .. cr:sub(5, 6))
 end
-function colorDistance(d0, d1)
-    local d2, d3, d4 = hexToRGB(d0)
-    local d5, d6, d7 = hexToRGB(d1)
-    return math.sqrt((d5 - d2) ^ 2 + (d6 - d3) ^ 2 + (d7 - d4) ^ 2)
+function colorDistance(cs, ct)
+    local cu, cv, cw = hexToRGB(cs)
+    local cx, cy, cz = hexToRGB(ct)
+    return math.sqrt((cx - cu) ^ 2 + (cy - cv) ^ 2 + (cz - cw) ^ 2)
 end
-function desiredColorCheck(d8)
-    local d9
-    local da
-    if d8 and d8:FindFirstChild("Dye") and d8.Dye.Value then
-        da = color3ToHex(d8.Dye.Value)
-        for db, dc in cY do
-            if Options.selectedDyes.Value[dc.Name] then
-                if da == dc.Hex then
-                    d9 = true
-                    print("Did not sell " .. d8.Name .. " - " .. dc.Name)
+function desiredColorCheck(cA)
+    local cB
+    local cC
+    if cA and cA:FindFirstChild("Dye") and cA.Dye.Value then
+        cC = color3ToHex(cA.Dye.Value)
+        for aj, cD in cp do
+            if Options.selectedDyes.Value[cD.Name] then
+                if cC == cD.Hex then
+                    cB = true
+                    print("Did not sell " .. cA.Name .. " - " .. cD.Name)
                     break
-                elseif not dc.SpecialType then
-                    local a8 = colorDistance(da, dc.Hex)
-                    if a8 <= Options.colorDistanceThreshold.Value then
-                        d9 = true
+                elseif not cD.SpecialType then
+                    local a1 = colorDistance(cC, cD.Hex)
+                    if a1 <= Options.colorDistanceThreshold.Value then
+                        cB = true
                         print(
                             "Did not sell " ..
-                                d8.Name ..
+                                cA.Name ..
                                     " - Similar to " ..
-                                        dc.Name ..
-                                            " - Color Distance: " .. math.floor(a8 / 0.1) / 10 .. " - Hex: " .. da
+                                        cD.Name ..
+                                            " - Color Distance: " .. math.floor(a1 / 0.1) / 10 .. " - Hex: " .. cC
                         )
                         break
                     end
@@ -2175,91 +2250,91 @@ function desiredColorCheck(d8)
             end
         end
     end
-    if d9 then
+    if cB then
         return true
     end
 end
-cz:AddButton(
+c0:AddButton(
     {
         Text = "Sell Selected Cosmetics",
         Func = function()
-            local cQ = {}
-            for K, L in bF:GetChildren() do
-                local dd = cV[L.Name] or cX[L.Name] or "none"
+            local ch = {}
+            for n, E in bf:GetChildren() do
+                local cE = cm[E.Name] or co[E.Name] or "none"
                 if
-                    (Options.selectedCosmetics.Value[dd] or Options.selectedWheelCosmetics.Value[dd]) and
-                        not L:FindFirstChild("Locked") and
-                        not desiredColorCheck(L)
+                    (Options.selectedCosmetics.Value[cE] or Options.selectedWheelCosmetics.Value[cE]) and
+                        not E:FindFirstChild("Locked") and
+                        not desiredColorCheck(E)
                  then
-                    table.insert(cQ, L)
+                    table.insert(ch, E)
                 end
             end
-            if #cQ > 0 then
-                libNoti("Sold " .. #cQ .. " Cosmetics")
-                sell(cQ)
+            if #ch > 0 then
+                libNoti("Sold " .. #ch .. " Cosmetics")
+                sell(ch)
             end
         end,
         DoubleClick = true
     }
 )
-cz:AddButton(
+c0:AddButton(
     {
         Text = "Recycle Selected Cosmetics",
         Func = function()
-            local cQ = {}
-            for K, L in bF:GetChildren() do
-                local dd = cV[L.Name] or cX[L.Name] or "none"
+            local ch = {}
+            for n, E in bf:GetChildren() do
+                local cE = cm[E.Name] or co[E.Name] or "none"
                 if
-                    (Options.selectedCosmetics.Value[dd] or Options.selectedWheelCosmetics.Value[dd]) and
-                        not L:FindFirstChild("Locked") and
-                        not desiredColorCheck(L)
+                    (Options.selectedCosmetics.Value[cE] or Options.selectedWheelCosmetics.Value[cE]) and
+                        not E:FindFirstChild("Locked") and
+                        not desiredColorCheck(E)
                  then
-                    table.insert(cQ, L)
+                    table.insert(ch, E)
                 end
             end
-            if #cQ > 0 then
-                libNoti("Recycled " .. #cQ .. " Cosmetics")
-                recycle(cQ)
+            if #ch > 0 then
+                libNoti("Recycled " .. #ch .. " Cosmetics")
+                recycle(ch)
             end
         end,
         DoubleClick = true
     }
 )
-if ay then
-    bF.ChildAdded:Connect(
-        function(L)
+if table.find(al, game.PlaceId) then
+    bf.ChildAdded:Connect(
+        function(E)
             if Toggles.autoSellCosmetics.Value or Toggles.autoRecycleCosmetics.Value then
-                local dd = cX[L.Name]
-                if dd then
-                    L:WaitForChild("Dye", 5)
+                local cE = co[E.Name]
+                if cE then
+                    E:WaitForChild("Dye", 5)
                     if
-                        Options.selectedWheelCosmetics.Value[dd] and not L:FindFirstChild("Locked") and
-                            not desiredColorCheck(L)
+                        Options.selectedWheelCosmetics.Value[cE] and not E:FindFirstChild("Locked") and
+                            not desiredColorCheck(E)
                      then
                         if Toggles.autoSellCosmetics.Value then
-                            sell({L})
+                            sell({E})
                         end
                         if Toggles.autoRecycleCosmetics.Value then
-                            recycle({L})
+                            recycle({E})
                         end
                     end
                 end
             end
         end
     )
-    bE.ChildAdded:Connect(
-        function(L)
+    be.ChildAdded:Connect(
+        function(E)
             if Toggles.autoSellEggs.Value then
-                local d8 = bJ[L.Name]
-                if d8.Type == "Egg" then
-                    sell({L})
+                local cA = bj[E.Name]
+                if cA.Type == "Egg" then
+                    sell({E})
                 end
             end
         end
     )
 end
-cB:AddInput("wheelCount", {Default = 100, Numeric = true, Finished = true, Text = "Wheel Spin Count"})
-cB:AddSlider(
+c2:AddInput("wheelCount", {Default = 100, Numeric = true, Finished = true, Text = "Wheel Spin Count"})
+c2:AddSlider(
     "wheelDelay",
     {
         Text = "Wheel Spin Delay",
@@ -2272,93 +2347,94 @@ cB:AddSlider(
         Compact = true
     }
 )
-local de =
-    cB:AddLabel(
+local cF =
+    c2:AddLabel(
     Options.wheelCount.Value ..
         " spins in " .. timeElapsed(math.round((Options.wheelCount.Value - 1) * Options.wheelDelay.Value * 10) / 10)
 )
 Options.wheelCount:OnChanged(
-    function(cM)
-        de:SetText(cM .. " spins in " .. timeElapsed(math.round((cM - 1) * Options.wheelDelay.Value * 10) / 10))
+    function(cd)
+        cF:SetText(cd .. " spins in " .. timeElapsed(math.round((cd - 1) * Options.wheelDelay.Value * 10) / 10))
     end
 )
 Options.wheelDelay:OnChanged(
-    function(cM)
-        de:SetText(
+    function(cd)
+        cF:SetText(
             Options.wheelCount.Value ..
-                " spins in " .. timeElapsed(math.round((Options.wheelCount.Value - 1) * cM * 10) / 10)
+                " spins in " .. timeElapsed(math.round((Options.wheelCount.Value - 1) * cd * 10) / 10)
         )
     end
 )
-cB:AddButton(
+c2:AddButton(
     {
         Text = "Spin wheel with the settings above!",
         Func = function()
-            local df, dg = tonumber(Options.wheelCount.Value), Options.wheelDelay.Value
-            if df > 0 then
+            local cG, cH = tonumber(Options.wheelCount.Value), Options.wheelDelay.Value
+            if cG > 0 then
                 libNoti(
                     "Spinning the wheel " ..
-                        df .. " times in " .. timeElapsed(math.round((df - 1) * dg * 10) / 10) .. " seconds!",
+                        cG .. " times in " .. timeElapsed(math.round((cG - 1) * cH * 10) / 10) .. " seconds!",
                     7
                 )
-                for K = 1, df do
-                    _.EventSpinner.JoinQueue:FireServer(c)
-                    task.wait(dg)
+                for n = 1, cG do
+                    V.EventSpinner.JoinQueue:FireServer(b)
+                    task.wait(cH)
                 end
             end
         end,
         DoubleClick = true
     }
 )
-function PlayerTp(x, c9, dh, di)
+function PlayerTp(r, bC, cI, cJ)
     if alive() then
-        aO.CFrame = CFrame.new(x + Vector3.new(c9, dh, di))
+        aw.CFrame = CFrame.new(r + Vector3.new(bC, cI, cJ))
     end
 end
-function SmartPlayerTp(bq, dj)
+function SmartPlayerTp(cK, cL)
     if not alive() then
         return
     end
     noclip()
-    aO.Velocity = Vector3.new()
-    if aN:FindFirstChild("Collider") then
-        aN.Collider.Velocity = Vector3.new()
+    aw.Velocity = Vector3.new()
+    if av:FindFirstChild("Collider") then
+        av.Collider.Velocity = Vector3.new()
     end
-    if dj then
-        aO.CFrame = CFrame.lookAt(bq.Position, Vector3.new(dj.Position.x, bq.Position.y, dj.Position.z))
+    if cL then
+        aw.CFrame = CFrame.lookAt(cK.Position, Vector3.new(cL.Position.x, cK.Position.y, cL.Position.z))
     else
-        aO.CFrame = bq
+        aw.CFrame = cK
     end
 end
-cD:AddToggle("NVD", {Text = "No Visual Damage", Default = true})
-cD:AddToggle("rendering", {Text = "Disable 3D Rendering", Default = false})
+c4:AddToggle("NVD", {Text = "No Visual Damage", Default = true})
+c4:AddToggle("disableEffects", {Text = "Disable Effects", Default = true})
+c4:AddToggle("rendering", {Text = "Disable 3D Rendering", Default = false})
 Toggles.rendering:OnChanged(
-    function(cc)
-        cloneref(game:GetService("RunService")):Set3dRenderingEnabled(not cc)
+    function(bF)
+        cloneref(game:GetService("RunService")):Set3dRenderingEnabled(not bF)
     end
 )
-cD:AddToggle("autoHide", {Text = "Hide GUI On Execution", Default = false})
-cF:AddButton(
+c4:AddToggle("autoHide", {Text = "Hide GUI On Execution", Default = false})
+c6:AddButton(
     {
         Text = "Upgrade Equipped Items",
         Func = function()
-            local dk = {aZ:GetChildren()[1], a_:GetChildren()[1], b0:GetChildren()[1]}
-            for db, dl in dk do
+            local cM = {aH:GetChildren()[1], aI:GetChildren()[1], aJ:GetChildren()[1]}
+            for aj, cN in cM do
                 task.spawn(
                     function()
-                        if dl and dl:FindFirstChild("UpgradeLimit") and dl.UpgradeLimit.Value ~= 0 then
-                            local dm = aV.Value
-                            local dn = tick()
+                        if cN and cN:FindFirstChild("UpgradeLimit") and cN.UpgradeLimit.Value ~= 0 then
+                            local cO = aD.Value
+                            local cP = tick()
                             while task.wait(0.1) do
-                                if dl:FindFirstChild("Upgrade") and dl.Upgrade.Value == dl.UpgradeLimit.Value then
+                                if cN:FindFirstChild("Upgrade") and cN.Upgrade.Value == cN.UpgradeLimit.Value then
                                     break
                                 else
-                                    b1:FireServer(dl)
-                                    if aV.Value ~= dm then
-                                        dm = aV.Value
-                                        dn = tick()
+                                    aK:FireServer(cN)
+                                    if aD.Value ~= cO then
+                                        cO = aD.Value
+                                        cP = tick()
                                     end
-                                    if tick() - dn >= 2 then
+                                    if tick() - cP >= 2 then
                                         break
                                     end
                                 end
@@ -2371,192 +2447,202 @@ cF:AddButton(
         DoubleClick = true
     }
 )
-cF:AddButton(
+c6:AddButton(
     {
-        Text = "Discover Dungeons (BLATANT)",
+        Text = "Discover Dungeons (!)",
         Func = function()
-            if alive() and not aw then
-                local dp = Workspace.PhysicalDungeonLocations
-                for K, L in dp:GetChildren() do
-                    _.Teleport.WaystoneTeleport:FireServer(1)
-                    aO:GetPropertyChangedSignal("Position"):Once(
+            if alive() and not ai then
+                local cQ = workspace.PhysicalDungeonLocations
+                for n, E in cQ:GetChildren() do
+                    local cR
+                    V.Teleport.WaystoneTeleport:FireServer(1)
+                    aw:GetPropertyChangedSignal("Position"):Once(
                         function()
-                            PlayerTp(L.Ring.Position, 0, 10, 0)
+                            aw:GetPropertyChangedSignal("Position"):Once(
+                                function()
+                                    cR = true
+                                end
+                            )
+                            PlayerTp(E.Ring.Position, 0, 7.5, 0)
                         end
                     )
-                    wait(1)
+                    repeat
+                        task.wait()
+                    until cR
+                    task.wait(1)
                 end
             end
         end,
         DoubleClick = true
     }
 )
-local dq = false
 if olympus then
-    cF:AddButton(
+    c6:AddButton(
         {Text = "Dex Explorer", Func = function()
-                if not dq then
-                    dq = true
-                    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-                end
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+            end, DoubleClick = true}
+    )
+    c6:AddButton(
+        {Text = "SimpleSpy", Func = function()
+                loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpyBeta.lua"))(
+
+                )
             end, DoubleClick = true}
     )
 end
-local dr = 7
-local ds = {
-    Bank = {DisplayName = "Bank", CodeName = "Bank", OrderId = 1},
-    ZeroAltar = {DisplayName = "Zero Altar", CodeName = "Fusion", OrderId = 2},
-    UpgradeMenu = {DisplayName = "Upgrade", CodeName = "ItemUpgrade", OrderId = 3},
-    DungeonMenu = {DisplayName = "Dungeon Menu", CodeName = "MissionSelect", OrderId = 4},
-    Inventory = {DisplayName = "Inventory", CodeName = "Inventory", OrderId = 5},
-    Recycler = {DisplayName = "Recycler", CodeName = "Recycler", OrderId = 6},
-    AdminItemPanel = {DisplayName = "Admin Item Panel", CodeName = "AdminItemPanel", OrderId = 7}
+getgenv().GuiData = {
+    {DisplayName = "Bank", CodeName = "Bank"},
+    {DisplayName = "Zero Altar", CodeName = "Fusion"},
+    {DisplayName = "Upgrade", CodeName = "ItemUpgrade"},
+    {DisplayName = "Dungeon Menu", CodeName = "MissionSelect"},
+    {DisplayName = "Inventory", CodeName = "Inventory"},
+    {DisplayName = "Recycler", CodeName = "Recycler"},
+    {DisplayName = "Admin Item Panel (!)", CodeName = "AdminItemPanel"}
 }
-function OpenGui(x)
+function OpenGui(cS)
     setthreadcontext(2)
-    require(Z.Client.Gui):Get(x):Open()
+    require(U.Client.Gui.GuiScripts[cS]):Open()
 end
-for K = 1, dr do
-    for dt, du in ds do
-        if du.OrderId == K then
-            cG:AddButton(
-                {Text = du.DisplayName, Func = function()
-                        OpenGui(du.CodeName)
-                    end, DoubleClick = false}
-            )
-        end
-    end
+for aj, cq in ipairs(GuiData) do
+    c7:AddButton(
+        {Text = cq.DisplayName, Func = function()
+                OpenGui(cq.CodeName)
+            end, DoubleClick = false}
+    )
 end
-cG:AddInput("marketFilter", {Numeric = false, Finished = true, Text = "Market Filter"})
-cG:AddButton(
+c7:AddInput("marketFilter", {Numeric = false, Finished = true, Text = "Market Filter"})
+c7:AddButton(
     {
         Text = "Open All Markets",
         Func = function()
             task.spawn(
                 function()
                     setthreadcontext(2)
-                    local dv = require(game.ReplicatedStorage.Client.Gui):Get("Shop")
-                    local dw = getfenv(dv.Open).BuildShop
-                    pcall(dv.Open, dv, game)
-                    for K, L in getupvalue(dw, 1) do
-                        L:Destroy()
-                    end
-                    for K, L in getupvalue(dw, 2) do
-                        L:Disconnect()
-                    end
-                    local dx = {}
-                    local dy = {}
-                    local dz = Z:WaitForChild("PlayerShops")
-                    for K, dA in b:GetPlayers() do
-                        local dB = dz:FindFirstChild(dA.Name) and dz[dA.Name]:FindFirstChild("SellShop")
-                        if dB and dB:FindFirstChild("Active") and dB.Active.Value then
-                            setupvalue(dw, 1, {})
-                            setupvalue(dw, 2, {})
-                            dw(dA)
-                            for K, L in getupvalue(dw, 1) do
-                                L.Title.Text = L.Title.Text .. " (" .. dA.Name .. ")"
-                                L.Title.Overlay.Text = L.Title.Text
-                                table.insert(dx, L)
+                    local cT = require(game.ReplicatedStorage.Client.Gui.GuiScripts.Shop)
+                    local cU = getfenv(cT.Open).BuildShop
+                    pcall(cT.Open, cT, game)
+                    pcall(
+                        function()
+                            for n, E in getupvalue(cU, 1) do
                             end
-                            for K, L in getupvalue(dw, 2) do
-                                table.insert(dy, L)
+                        end
+                    )
+                    for n, E in getupvalue(cU, 2) do
+                    end
+                    local cV = {}
+                    local cW = {}
+                    local cX = U:WaitForChild("PlayerShops")
+                    for n, cY in a:GetPlayers() do
+                        local cZ = cX:FindFirstChild(cY.Name) and cX[cY.Name]:FindFirstChild("SellShop")
+                        if cZ and cZ:FindFirstChild("Active") and cZ.Active.Value then
+                            setupvalue(cU, 1, {})
+                            setupvalue(cU, 2, {})
+                            cU(cY)
+                            for n, E in getupvalue(cU, 1) do
+                                E.Title.Text = E.Title.Text .. " (" .. cY.Name .. ")"
+                                E.Title.Overlay.Text = E.Title.Text
+                                table.insert(cV, E)
+                            end
+                            for n, E in getupvalue(cU, 2) do
+                                table.insert(cW, E)
                             end
                         end
                     end
                     if Options.marketFilter.Value and #Options.marketFilter.Value > 0 then
-                        for K, L in dx do
-                            if not L.Title.Text:lower():find(Options.marketFilter.Value:lower()) then
-                                L:Destroy()
+                        for n, E in cV do
+                            if not E.Title.Text:lower():find(Options.marketFilter.Value:lower()) then
+                                E:Destroy()
                             end
                         end
                     end
                     table.sort(
-                        dx,
-                        function(dC, c8)
-                            local dD =
-                                dC:FindFirstChild("Cost") and dC.Cost:FindFirstChild("Overlay") and
-                                #dC.Cost.Overlay.Text > 0 and
-                                dC.Cost.Overlay.Text:gsub(",", "") and
-                                tonumber(dC.Cost.Overlay.Text:gsub(",", "")) or
+                        cV,
+                        function(c_, bB)
+                            local d0 =
+                                c_:FindFirstChild("Cost") and c_.Cost:FindFirstChild("Overlay") and
+                                #c_.Cost.Overlay.Text > 0 and
+                                c_.Cost.Overlay.Text:gsub(",", "") and
+                                tonumber(c_.Cost.Overlay.Text:gsub(",", "")) or
                                 0
-                            local dE =
-                                c8:FindFirstChild("Cost") and c8.Cost:FindFirstChild("Overlay") and
-                                #c8.Cost.Overlay.Text > 0 and
-                                c8.Cost.Overlay.Text:gsub(",", "") and
-                                tonumber(c8.Cost.Overlay.Text:gsub(",", "")) or
+                            local d1 =
+                                bB:FindFirstChild("Cost") and bB.Cost:FindFirstChild("Overlay") and
+                                #bB.Cost.Overlay.Text > 0 and
+                                bB.Cost.Overlay.Text:gsub(",", "") and
+                                tonumber(bB.Cost.Overlay.Text:gsub(",", "")) or
                                 0
-                            return dD > dE
+                            return d0 > d1
                         end
                     )
-                    setupvalue(dw, 1, dx)
-                    setupvalue(dw, 2, dy)
-                    getupvalue(dv.Init, 1).Title.Text = "All Shops"
-                    getupvalue(dv.Init, 1).Title.Overlay.Text = "All Shops"
+                    setupvalue(cU, 1, cV)
+                    setupvalue(cU, 2, cW)
+                    getupvalue(cT.Init, 1).Title.Text = "All Shops"
+                    getupvalue(cT.Init, 1).Title.Overlay.Text = "All Shops"
                 end
             )
         end,
         DoubleClick = false
     }
 )
-local dF = cI:AddLabel("Gold Gain: " .. aV.Value - aW)
-local dG = cI:AddLabel("Gold Rate: N/A")
-local dH = true
-g = tick()
-local dI
-local dJ
-local dK = false
-local dL = cI:AddLabel("Total Gold: " .. formatNumberWithCommas(aV.Value))
-local dM = cI:AddLabel("Session Time: 0s")
-cI:AddDivider()
-local dN = ai.CrossSessionTimestamp or tick()
-local dO = cI:AddLabel("Cross-Session Time: " .. timeElapsed(tick() - dN))
-local dP =
-    cI:AddLabel("CS Gold Gain: " .. formatNumberWithCommas(ai.CrossSessionGold and aX - ai.CrossSessionGold or 0))
-local dQ = ai.CrossSessionGold or aX
-cI:AddButton(
+local d2 = c9:AddLabel("Gold Gain: " .. aD.Value - aE)
+local d3 = c9:AddLabel("Gold Rate: N/A")
+local d4 = 0
+local d5 = true
+c = tick()
+local d6
+local d7
+local d8 = false
+local d9 = c9:AddLabel("Total Gold: " .. formatNumberWithCommas(aD.Value))
+local da = c9:AddLabel("Session Time: 0s")
+c9:AddDivider()
+local db = a7.CrossSessionTimestamp or tick()
+local dc = c9:AddLabel("Cross-Session Time: " .. timeElapsed(tick() - db))
+local dd =
+    c9:AddLabel("CS Gold Gain: " .. formatNumberWithCommas(a7.CrossSessionGold and aF - a7.CrossSessionGold or 0))
+local de = a7.CrossSessionGold or aF
+c9:AddButton(
     {Text = "Reset Cross-Session Time", Func = function()
-            dN = tick()
-            ai.CrossSessionTimestamp = dN
+            db = tick()
+            a7.CrossSessionTimestamp = db
             save()
         end, DoubleClick = true}
 )
-cI:AddButton(
+c9:AddButton(
     {Text = "Reset Cross-Session Gold", Func = function()
-            dQ = aX
-            ai.CrossSessionGold = dQ
+            de = aF
+            a7.CrossSessionGold = de
             save()
-            dP:SetText("CS Gold Gain: 0")
+            dd:SetText("CS Gold Gain: 0")
         end, DoubleClick = true}
 )
-local dR
-if not ai.CrossSessionTimestamp then
-    ai.CrossSessionTimestamp = dN
-    dR = true
+local df
+if not a7.CrossSessionTimestamp then
+    a7.CrossSessionTimestamp = db
+    df = true
 end
-if not ai.CrossSessionGold then
-    ai.CrossSessionGold = dQ
-    dR = true
+if not a7.CrossSessionGold then
+    a7.CrossSessionGold = de
+    df = true
 end
-if dR then
+if df then
     save()
 end
 task.spawn(
     function()
         while true do
-            if aV.Value ~= aX then
-                aX = aV.Value
-                if not dH then
-                    dG:SetText("Gold Rate: " .. math.floor((aX - dJ) / (tick() - dI) * 600) / 10 .. "/min")
+            if aD.Value ~= aF then
+                aF = aD.Value
+                if not d5 then
+                    d3:SetText("Gold Rate: " .. math.floor((aF - d7) / (tick() - d6) * 600) / 10 .. "/min")
                 end
-                if dH then
-                    dH = false
-                    dK = true
-                    dI = tick()
-                    dJ = aX
+                if d5 then
+                    d5 = false
+                    d8 = true
+                    d6 = tick()
+                    d7 = aF
                 end
-                dF:SetText("Gold Gained: " .. formatNumberWithCommas(aX - aW))
-                dL:SetText("Total Gold: " .. formatNumberWithCommas(aX))
-                dP:SetText("CS Gold Gain: " .. formatNumberWithCommas(aX - dQ))
+                d2:SetText("Gold Gained: " .. formatNumberWithCommas(aF - aE))
+                d9:SetText("Total Gold: " .. formatNumberWithCommas(aF))
+                dd:SetText("CS Gold Gain: " .. formatNumberWithCommas(aF - de))
             end
             task.wait()
         end
@@ -2566,133 +2652,145 @@ task.spawn(
     function()
         while true do
             task.wait(1)
-            dM:SetText("Session Time: " .. timeElapsed(tick() - g))
-            dO:SetText("Cross-Session Time: " .. timeElapsed(tick() - dN))
+            da:SetText("Session Time: " .. timeElapsed(tick() - c))
+            dc:SetText("Cross-Session Time: " .. timeElapsed(tick() - db))
         end
     end
 )
-for K = 1, c3 do
-    for dt, dS in c4 do
-        if dS.OrderId == K then
-            cJ:AddButton(
-                {Text = dS.Name, Func = function()
-                        _.Teleport.TeleportToHub:FireServer(dS.Id)
-                    end, DoubleClick = false}
-            )
-        end
+local dg
+for n, dh in ipairs(WorldData) do
+    if n % 2 > 0 then
+        dg = false
+    end
+    if not dh.Name:find("World") then
+        dg = false
+    end
+    if not dg then
+        dg =
+            ca:AddButton(
+            {Text = dh.Name, Func = function()
+                    V.Teleport.TeleportToHub:FireServer(dh.Id)
+                end, DoubleClick = true}
+        )
+    else
+        dg:AddButton(
+            {Text = dh.Name, Func = function()
+                    V.Teleport.TeleportToHub:FireServer(dh.Id)
+                end, DoubleClick = true}
+        )
     end
 end
-for K, L in au do
-    cK:AddButton(
-        {Text = bG[L].NameTag .. " T" .. K, Func = function()
-                StartRaid(L)
+for n, E in ipairs(Towers) do
+    cb:AddButton(
+        {Text = bg[E].NameTag .. " T" .. n, Func = function()
+                StartRaid(E)
             end, DoubleClick = false}
     )
 end
-for K, L in av do
-    cL:AddButton(
+for n, E in Nightmares do
+    cc:AddButton(
         {
-            Text = string.gsub(bG[L].NameTag, "%(NIGHTMARE%) ", "") ..
-                " " .. bG[L].DisplayWorldID .. "-" .. bG[L].WorldMissionID,
+            Text = string.gsub(bg[E].NameTag, "%(NIGHTMARE%) ", "") ..
+                " " .. bg[E].DisplayWorldID .. "-" .. bg[E].WorldMissionID,
             Func = function()
-                StartRaid(L, Toggles.ChallengeMode.Value and 5 or 1)
+                StartRaid(E, Toggles.ChallengeMode.Value and 5 or 1)
             end,
             DoubleClick = false
         }
     )
 end
-cL:AddToggle("ChallengeMode", {Text = "Challenge Mode", Default = true})
-local dT = Vector3.new(0, 500, 0)
-local dU = Vector3.new()
-local dV
-local dW
+cc:AddToggle("ChallengeMode", {Text = "Challenge Mode", Default = true})
+local di = Vector3.new(0, 500, 0)
+local dj = Vector3.new()
+local dk
+local dl
+local dm
 do
-    function isKrakenArm(dX)
-        return dX:lower():find("kraken-arm") or dX:lower():find("krakenarm")
+    function isKrakenArm(dn)
+        return dn:lower():find("kraken-arm") or dn:lower():find("krakenarm")
     end
     function MobTeleport()
         task.spawn(
             function()
-                local dY
-                local dZ
-                local d_
+                local dp
+                local dq
+                local dr
                 while Toggles.Autofarm.Value do
-                    for K, L in bd:GetChildren() do
-                        if isAlive(L) then
-                            if mobWaitTbl and table.find(mobWaitTbl, L.Name) and (not d_ or alwaysWait) then
+                    for n, E in aS:GetChildren() do
+                        if isAlive(E) then
+                            if mobWaitTbl and table.find(mobWaitTbl, E.Name) and (not dr or alwaysWait) then
                                 task.wait(waittime)
-                                d_ = true
+                                dr = true
                             end
-                            local a5 = L.PrimaryPart
+                            local Z = E.PrimaryPart
                             if not firstMobFound then
                                 firstMobFound = true
                             end
-                            while isAlive(L) and Toggles.Autofarm.Value and a2 do
-                                bQ = L
-                                dY = a5.Position
-                                setCamera(not bP and Toggles.mobCamera.Value and bo, a5.Position)
-                                dV =
-                                    isKrakenArm(L.Name) and 0 or
-                                    (a5.Size.Y / 2 + Options.Offset.Value) * (isRangedClass() and 1 or -1)
-                                dW =
+                            while isAlive(E) and Toggles.Autofarm.Value and W do
+                                bq = E
+                                dp = Z.Position
+                                setCamera(not bp and Toggles.mobCamera.Value and Z)
+                                dk =
+                                    isKrakenArm(E.Name) and 0 or
+                                    (Z.Size.Y / 2 + Options.Offset.Value) * (isRangedClass() and 1 or -1)
+                                dl =
                                     CFrame.new(
-                                    a5.Position +
-                                        (table.find(aM, L) and dU or Vector3.new(0, dV, 0) + (bP and dT or dU))
+                                    Z.Position + (table.find(au, E) and dj or Vector3.new(0, dk, 0) + (bp and di or dj))
                                 ) +
-                                    a5.CFrame.lookVector * 2
-                                dZ = dW
-                                SmartPlayerTp(dW, a5)
-                                bS:Wait()
+                                    Z.CFrame.lookVector * 2
+                                dq = dl
+                                SmartPlayerTp(dl, Z)
+                                bs:Wait()
                             end
                         end
                     end
-                    bQ = nil
+                    bq = nil
                     setCamera()
                     unnoclip()
-                    if aC and a2 and dZ then
-                        SmartPlayerTp(dZ)
+                    if ao and W and dq then
+                        SmartPlayerTp(dq)
                     end
                     task.wait()
                 end
-                if dY and aC then
-                    SmartPlayerTp(CFrame.new(dY + Vector3.new(0, 10, 0)))
+                if dp and ao then
+                    SmartPlayerTp(CFrame.new(dp + Vector3.new(0, 10, 0)))
                 end
             end
         )
     end
-    function MobTeleportIgnore(e0, mobWaitTbl, waittime, alwaysWait)
-        local d_
+    function MobTeleportIgnore(ds, mobWaitTbl, waittime, alwaysWait)
+        local dr
         task.spawn(
             function()
                 while Toggles.Autofarm.Value do
-                    for K, L in bd:GetChildren() do
-                        if isAlive(L) then
-                            if L.Name ~= e0 or L.Name == e0 and b7 == 1 then
-                                if mobWaitTbl and table.find(mobWaitTbl, L.Name) and (not d_ or alwaysWait) then
+                    for n, E in aS:GetChildren() do
+                        if isAlive(E) then
+                            if E.Name ~= ds or E.Name == ds and aP == 1 then
+                                if mobWaitTbl and table.find(mobWaitTbl, E.Name) and (not dr or alwaysWait) then
                                     task.wait(waittime)
-                                    d_ = true
+                                    dr = true
                                 end
-                                local a5 = L.PrimaryPart
-                                while isAlive(L) and Toggles.Autofarm.Value and a2 and
-                                    (L.Name ~= e0 or L.Name == e0 and b7 == 1) do
-                                    bQ = L
-                                    setCamera(not bP and Toggles.mobCamera.Value and bo, a5.Position)
-                                    dV =
-                                        isKrakenArm(L.Name) and 0 or
-                                        (a5.Size.Y / 2 + Options.Offset.Value) * (isRangedClass() and 1 or -1)
-                                    dW =
+                                local Z = E.PrimaryPart
+                                while isAlive(E) and Toggles.Autofarm.Value and W and
+                                    (E.Name ~= ds or E.Name == ds and aP == 1) do
+                                    bq = E
+                                    setCamera(not bp and Toggles.mobCamera.Value and Z)
+                                    dk =
+                                        isKrakenArm(E.Name) and 0 or
+                                        (Z.Size.Y / 2 + Options.Offset.Value) * (isRangedClass() and 1 or -1)
+                                    dl =
                                         CFrame.new(
-                                        a5.Position +
-                                            (table.find(aM, L) and dU or Vector3.new(0, dV, 0) + (bP and dT or dU))
+                                        Z.Position +
+                                            (table.find(au, E) and dj or Vector3.new(0, dk, 0) + (bp and di or dj))
                                     ) +
-                                        a5.CFrame.lookVector * 2
-                                    SmartPlayerTp(dW, a5)
-                                    bS:Wait()
+                                        Z.CFrame.lookVector * 2
+                                    SmartPlayerTp(dl, Z)
+                                    bs:Wait()
                                 end
                             end
                         end
                     end
-                    bQ = nil
+                    bq = nil
                     setCamera()
                     unnoclip()
                     task.wait()
@@ -2700,32 +2798,32 @@ do
             end
         )
     end
-    function MobTeleportPriority(e1, mobWaitTbl, waittime, alwaysWait)
-        local e2, e3
+    function MobTeleportPriority(dt, mobWaitTbl, waittime, alwaysWait)
+        local du, dv
         task.spawn(
             function()
                 while Toggles.Autofarm.Value do
-                    local e4 = false
-                    local e5 = {}
-                    for K, L in bd:GetChildren() do
-                        if isAlive(L) then
-                            table.insert(e5, L)
+                    local dw = false
+                    local dx = {}
+                    for n, E in aS:GetChildren() do
+                        if isAlive(E) then
+                            table.insert(dx, E)
                         end
                     end
-                    for K = 1, #e1 do
-                        for db, Mob in e5 do
-                            if Mob.Name == e1[K] then
-                                e4 = true
-                                e2, e3 = Mob, Mob.Name
+                    for n = 1, #dt do
+                        for aj, Mob in dx do
+                            if Mob.Name == dt[n] then
+                                dw = true
+                                du, dv = Mob, Mob.Name
                                 break
                             end
                         end
-                        if e4 then
+                        if dw then
                             break
                         end
                     end
-                    if not e4 and e5[1] then
-                        e2, e3 = e5[1], e5[1].Name
+                    if not dw and dx[1] then
+                        du, dv = dx[1], dx[1].Name
                     end
                     task.wait()
                 end
@@ -2733,76 +2831,116 @@ do
         )
         task.spawn(
             function()
-                local d_
+                local dr
                 while Toggles.Autofarm.Value do
-                    if isAlive(e2) and a2 then
-                        local e6 = e2.PrimaryPart
-                        bQ = e2
-                        if mobWaitTbl and table.find(mobWaitTbl, e3) and (not d_ or alwaysWait) then
+                    if isAlive(du) and W then
+                        local dy = du.PrimaryPart
+                        bq = du
+                        if mobWaitTbl and table.find(mobWaitTbl, dv) and (not dr or alwaysWait) then
                             task.wait(waittime)
-                            d_ = true
+                            dr = true
                         end
-                        setCamera(not bP and Toggles.mobCamera.Value and bo, e6.Position)
-                        dV =
-                            isKrakenArm(e3) and 0 or
-                            (e6.Size.Y / 2 + Options.Offset.Value) * (isRangedClass() and 1 or -1)
-                        dW =
+                        setCamera(not bp and Toggles.mobCamera.Value and dy)
+                        dk =
+                            isKrakenArm(dv) and 0 or
+                            (dy.Size.Y / 2 + Options.Offset.Value) * (isRangedClass() and 1 or -1)
+                        dl =
                             CFrame.new(
-                            e6.Position + (table.find(aM, e2) and dU or Vector3.new(0, dV, 0) + (bP and dT or dU))
+                            dy.Position + (table.find(au, du) and dj or Vector3.new(0, dk, 0) + (bp and di or dj))
                         ) +
-                            e6.CFrame.lookVector * 2
-                        SmartPlayerTp(dW, e6)
+                            dy.CFrame.lookVector * 2
+                        SmartPlayerTp(dl, dy)
                     else
-                        bQ = nil
+                        bq = nil
                         setCamera()
                         unnoclip()
                     end
-                    bS:Wait()
+                    bs:Wait()
                 end
+                setCamera()
             end
         )
     end
     function AutoCheckpoint()
         task.spawn(
             function()
+                local dz = 0.25
+                local dA = bA[ag] or 0
                 while Toggles.Autofarm.Value do
-                    if alive() then
-                        for db, e7 in workspace:GetChildren() do
-                            if not table.find(c0, e7.Name) then
-                                for K, L in e7:GetDescendants() do
+                    if ar or as then
+                        break
+                    end
+                    if alive() and aP <= dA then
+                        local dB
+                        for aj, o in workspace:GetChildren() do
+                            if not table.find(by, o.Name) then
+                                for n, E in o:GetDescendants() do
                                     if
-                                        L and L.Name == "TouchInterest" and L.Parent and
-                                            (table.find(b_, L.Parent.Name) or
-                                                L.Parent.Parent and table.find(b_, L.Parent.Parent.Name))
+                                        E and E.Name == "TouchInterest" and E.Parent and
+                                            (table.find(bx, E.Parent.Name) or
+                                                E.Parent.Parent and table.find(bx, E.Parent.Parent.Name)) and
+                                            alive()
                                      then
-                                        task.spawn(
-                                            function()
-                                                L.Parent.CanCollide = false
-                                                L.Parent.Anchored = true
-                                                L.Parent.Transparency = 1
-                                                L.Parent.CFrame = CFrame.new(aO.Position)
-                                                task.wait(0.25)
-                                                if L and L.Parent then
-                                                    L.Parent.CFrame = CFrame.new(Vector3.new(0, 0, 0))
+                                        if E.Parent.Name == "WaveExit" then
+                                            task.wait(0.5)
+                                            if alive() and Toggles.Autofarm.Value then
+                                                local dC = aw.CFrame
+                                                PlayerTp(E.Parent.Position, 0, 25, 0)
+                                                local cP = tick()
+                                                repeat
+                                                    task.wait()
+                                                until not o:FindFirstChild("WaveExit") or tick() - cP > 1 or
+                                                    not Toggles.Autofarm.Value
+                                                if alive() and o:FindFirstChild("WaveExit") and Toggles.Autofarm.Value then
+                                                    aw.CFrame = dC
                                                 end
+                                                dB = true
                                             end
-                                        )
+                                        else
+                                            task.spawn(
+                                                function()
+                                                    E.Parent.CanCollide = false
+                                                    E.Parent.Anchored = true
+                                                    E.Parent.Transparency = 1
+                                                    local dC = E.Parent.CFrame
+                                                    E.Parent.CFrame = CFrame.new(aw.Position) * (dC - dC.Position)
+                                                    task.wait(dz)
+                                                    if E and E.Parent then
+                                                        E.Parent.CFrame = dC
+                                                    end
+                                                end
+                                            )
+                                        end
                                     end
                                 end
                             end
                         end
-                        local e8 = tick()
+                        local dD = tick()
                         while Toggles.Autofarm.Value do
-                            if tick() - e8 > 3 or tick() - e8 > 0.5 and b7 == 0 then
-                                break
+                            if tick() - dD > dz * 2 and aP <= dA then
+                                local dE = true
+                                if an then
+                                    local cP = tick()
+                                    while Toggles.Autofarm.Value do
+                                        if aP > 0 then
+                                            dE = false
+                                            dD = tick()
+                                            break
+                                        end
+                                        if tick() - cP > 0.75 or dB then
+                                            break
+                                        end
+                                        task.wait()
+                                    end
+                                end
+                                if dE then
+                                    break
+                                end
                             end
                             task.wait()
                         end
                     end
                     task.wait()
-                    if aG then
-                        break
-                    end
                 end
             end
         )
@@ -2811,14 +2949,14 @@ do
         task.spawn(
             function()
                 while Toggles.Autofarm.Value do
-                    b8 = 0
-                    for K, L in bd:GetChildren() do
-                        if isAlive(L) then
-                            b8 = b8 + 1
+                    aQ = 0
+                    for n, E in aS:GetChildren() do
+                        if isAlive(E) then
+                            aQ = aQ + 1
                         end
                     end
-                    if b7 ~= b8 then
-                        b7 = b8
+                    if aP ~= aQ then
+                        aP = aQ
                     end
                     task.wait()
                 end
@@ -2829,54 +2967,54 @@ do
         if Toggles.Autofarm.Value then
             task.spawn(
                 function()
-                    bO = nil
+                    bo = nil
                     while Toggles.Autofarm.Value do
-                        if bQ and bQ.PrimaryPart and bQ.PrimaryPart.Position then
-                            bO =
-                                aG and CFrame.new(Vector3.new(324, 60, -134)) or
-                                CFrame.new(bQ.PrimaryPart.Position + Vector3.new(0, 5, 0))
+                        if bq and bq.PrimaryPart and bq.PrimaryPart.Position then
+                            bo =
+                                ar and CFrame.new(Vector3.new(324, 60, -134)) or
+                                CFrame.new(bq.PrimaryPart.Position + Vector3.new(0, 5, 0))
                         end
-                        if bO and b7 == 0 then
-                            local e9 = tick()
-                            while tick() - e9 <= 0.1 and b7 == 0 do
-                                SmartPlayerTp(bO)
-                                bS:Wait()
+                        if bo and aP == 0 then
+                            local dF = tick()
+                            while tick() - dF <= 0.1 and aP == 0 do
+                                SmartPlayerTp(bo)
+                                bs:Wait()
                             end
-                            bO = nil
+                            bo = nil
                         end
                         task.wait()
                     end
                     if not Toggles.Autofarm.Value then
-                        if bO then
-                            local e9 = tick()
-                            while tick() - e9 <= 0.1 do
-                                SmartPlayerTp(bO)
-                                bS:Wait()
+                        if bo then
+                            local dF = tick()
+                            while tick() - dF <= 0.1 do
+                                SmartPlayerTp(bo)
+                                bs:Wait()
                             end
-                            bO = nil
+                            bo = nil
                         end
                     end
                 end
             )
         end
     end
-    function sell(bx)
-        _.Drops.SellItems:InvokeServer(bx)
+    function sell(b8)
+        V.Drops.SellItems:InvokeServer(b8)
     end
-    function recycle(bx)
-        _.Recycler.Recycle:FireServer(bx)
+    function recycle(b8)
+        V.Recycler.Recycle:FireServer(b8)
     end
 end
-if j then
-    function ChangeCosmetic(x, y)
-        if aN then
-            aQ:SetAttribute(x, y)
+if addingCosmetics then
+    function ChangeCosmetic(r, s)
+        if av then
+            ay:SetAttribute(r, s)
         end
     end
-    function color(c9, dh, di)
-        Color3.fromRGB(c9, dh, di)
+    function color(bC, cI, cJ)
+        Color3.fromRGB(bC, cI, cJ)
     end
-    local ea = {
+    local dG = {
         Red = Color3.fromRGB(255, 0, 0),
         Black = Color3.fromRGB(0, 0, 0),
         White = Color3.fromRGB(255, 255, 255),
@@ -2887,7 +3025,7 @@ if j then
         Orange = Color3.fromRGB(255, 127.5, 0),
         LightPink = Color3.fromRGB(255, 127.5, 255)
     }
-    local aY = {
+    local aG = {
         Costume = "Costume",
         CostumeDye = "CostumeDye",
         RightAura = "RightAura",
@@ -2904,72 +3042,52 @@ if j then
         Hat3Dye = "Hat3Dye",
         Mount = "Mount"
     }
-    local eb = {Costume = "CogWorkArmor", Hat1 = "CogWorkTophat", Hat2 = "CogWorkGoggles"}
+    local dH = {Costume = "CogWorkArmor", Hat1 = "CogWorkTophat", Hat2 = "CogWorkGoggles"}
     function CogWorkOutfit()
-        if aQ:GetAttribute("Primary") then
-            local ec = bJ[aQ:GetAttribute("Primary")].SubType
-            if ec == "Greataxe" then
-                ChangeCosmetic(aY.RightWepSkin, "CogWorkAxe")
+        if ay:GetAttribute("Primary") then
+            local dI = bj[ay:GetAttribute("Primary")].SubType
+            if dI == "Greataxe" then
+                ChangeCosmetic(aG.RightWepSkin, "CogWorkAxe")
             else
-                ChangeCosmetic(aY.RightWepSkin, "CogWork" .. ec)
+                ChangeCosmetic(aG.RightWepSkin, "CogWork" .. dI)
             end
         end
-        if aQ:GetAttribute("Offhand") then
-            local ec = bJ[aQ:GetAttribute("Offhand")].SubType
-            if ec == "Greataxe" then
-                ChangeCosmetic(aY.LeftWepSkin, "CogWorkAxe")
+        if ay:GetAttribute("Offhand") then
+            local dI = bj[ay:GetAttribute("Offhand")].SubType
+            if dI == "Greataxe" then
+                ChangeCosmetic(aG.LeftWepSkin, "CogWorkAxe")
             else
-                ChangeCosmetic(aY.LeftWepSkin, "CogWork" .. ec)
+                ChangeCosmetic(aG.LeftWepSkin, "CogWork" .. dI)
             end
         end
-        for K, L in eb do
-            ChangeCosmetic(K, L)
+        for n, E in dH do
+            ChangeCosmetic(n, E)
         end
     end
     OutfitList:AddButton(
         {Text = "Cogwork", Func = function()
-                if aN then
+                if av then
                     CogWorkOutfit()
                 end
             end, DoubleClick = false}
     )
 end
-local function ed(dC, c8, cc)
-    return string.char(dC + c8 - cc)
-end
-local ee = ""
-ee = ee .. ed(68, 1, 1)
-ee = ee .. ed(101, 2, 2)
-ee = ee .. ed(109, 3, 3)
-ee = ee .. ed(111, 4, 4)
-ee = ee .. ed(110, 5, 5)
-table.insert(bn, ee)
-local ef = ""
-ef = ef .. ed(76, 2, 2)
-ef = ef .. ed(105, 1, 1)
-ef = ef .. ed(102, 0, 0)
-ef = ef .. ed(101, -1, -1)
-ef = ef .. ed(83, 0, 0)
-ef = ef .. ed(116, 0, 0)
-ef = ef .. ed(101, 0, 0)
-ef = ef .. ed(97, 0, 0)
-ef = ef .. ed(108, 0, 0)
-function hookWithUserInfo(eg, eh, ei, color, p, ej)
+function hookWithUserInfo(dJ, dK, dL, color, d, dM)
     request(
         {
-            Url = eg,
+            Url = dJ,
             Method = "POST",
             Headers = {["Content-Type"] = "application/json"},
-            Body = e:JSONEncode(
+            Body = HttpService:JSONEncode(
                 {
-                    ["content"] = ej or "",
+                    ["content"] = dM or "",
                     ["embeds"] = {
                         {
-                            ["title"] = eh,
-                            ["description"] = ei,
+                            ["title"] = dK,
+                            ["description"] = dL,
                             ["type"] = "rich",
                             ["color"] = tonumber(color),
-                            ["footer"] = {["text"] = p .. " UTC"}
+                            ["footer"] = {["text"] = d .. " UTC"}
                         }
                     }
                 }
@@ -2977,22 +3095,22 @@ function hookWithUserInfo(eg, eh, ei, color, p, ej)
         }
     )
 end
-function anonHook(eg, eh, ei, color, p, ej)
+function anonHook(dJ, dK, dL, color, d, dM)
     request(
         {
-            Url = eg,
+            Url = dJ,
             Method = "POST",
             Headers = {["Content-Type"] = "application/json"},
-            Body = e:JSONEncode(
+            Body = HttpService:JSONEncode(
                 {
-                    ["content"] = ej or "",
+                    ["content"] = dM or "",
                     ["embeds"] = {
                         {
-                            ["title"] = eh,
-                            ["description"] = ei,
+                            ["title"] = dK,
+                            ["description"] = dL,
                             ["type"] = "rich",
                             ["color"] = tonumber(color),
-                            ["footer"] = {["text"] = p .. " UTC"}
+                            ["footer"] = {["text"] = d .. " UTC"}
                         }
                     }
                 }
@@ -3000,189 +3118,181 @@ function anonHook(eg, eh, ei, color, p, ej)
         }
     )
 end
-function msg(ek, color, p)
-    local el = Options.dungeonHook.Value
-    local em = p > 600 and timeElapsed(p) or math.round(p / 0.1) / 10 .. "s"
-    local en =
+function msg(dN, color, d)
+    local dO = Options.dungeonHook.Value
+    local dP =
         "Code: ``" ..
-        i .. "``\nMission: ``" .. h .. "``\nTime: ``" .. em .. "``\nClass: " .. "``" .. cd[b3].DisplayName .. "``"
-    if aC then
-        local bs = bd:GetChildren()[1]
-        local eo = bs and Mob(bs.Name)
-        local aa, e3 = eo and eo.BossTag, eo and eo.NameTag
-        if aa and e3 then
-            en = en .. "\nBoss: ``" .. e3 .. "``"
+        MissionCode ..
+            "``\nMission: ``" .. MissionName .. "``\nTime: ``" .. d .. "``\nClass: ``" .. bG[aM].DisplayName .. "``"
+    if ao then
+        local b4 = aS:GetChildren()[1]
+        local dQ = b4 and Mob(b4.Name)
+        local a3, dv = dQ and dQ.BossTag, dQ and dQ.NameTag
+        if a3 and dv then
+            dP = dP .. "\nBoss: ``" .. dv .. "``"
         end
     end
-    if ad then
-        if ai.LastDungeonCompletion then
-            en =
-                en ..
-                "\nTime Since Last Completion: ``" .. math.round((bU - ai.LastDungeonCompletion) / 0.1) / 10 .. "s``"
+    if isfile and readfile and writefile then
+        if a7.LastDungeonCompletion then
+            dP =
+                dP ..
+                "\nTime Since Last Completion: ``" .. timeElapsed(math.round(bu - a7.LastDungeonCompletion)) .. "``"
         end
-        if ai.Gold and a3 >= ai.Gold then
-            en = en .. "\nGold Gained: ``" .. formatNumberWithCommas(a3 - ai.Gold) .. "``"
+        if a7.Gold and X >= a7.Gold then
+            dP = dP .. "\nGold Gained: ``" .. formatNumberWithCommas(X - a7.Gold) .. "``"
         end
-        ai.Gold = a3
-        ai.LastDungeonCompletion = bU
+        a7.Gold = X
+        a7.LastDungeonCompletion = bu
         save()
     end
-    en = en .. "\nGold: ``" .. formatNumberWithCommas(aV.Value) .. "``"
-    if aF then
-        local ep = {
-            KrakenRaid = {coinCode = "KrakenCoin", coinStr = "Kraken Coins", lb = "KRAKEN_KILLS", name = "Kraken"},
-            VaneRaid = {coinCode = "DragonCoin", coinStr = "Dragon Coins", lb = "VANE_KILLS", name = "Vane"},
-            HalloweenRaid = {
+    dP = dP .. "\nGold: ``" .. formatNumberWithCommas(aD.Value) .. "``"
+    if ar then
+        local dR = {
+            [45] = {coinCode = "KrakenCoin", coinStr = "Kraken Coins", lb = "KRAKEN_KILLS_2025", name = "Kraken"},
+            [44] = {coinCode = "DragonCoin", coinStr = "Dragon Coins", lb = "VANE_KILLS", name = "Vane"},
+            [22] = {
                 coinCode = "HalloweenCoin",
                 coinStr = "Halloween Coins",
                 lb = "FALLENKING_KILLS",
                 name = "Halloween"
             },
-            ChristmasRaid = {
-                coinCode = "ChristmasCoin",
-                coinStr = "Christmas Coins",
-                lb = "SANTA_KILLS",
-                name = "Christmas"
-            }
+            [17] = {coinCode = "ChristmasCoin", coinStr = "Christmas Coins", lb = "SANTA_KILLS", name = "Christmas"}
         }
-        local eq = aG and "KrakenRaid" or aI and "VaneRaid" or aJ and "HalloweenRaid" or aH and "ChristmasRaid"
-        local er = ep[eq].coinCode
-        local es = ep[eq].coinStr
-        local et = ep[eq].lb
-        local eu = ep[eq].name
-        local ev = game:GetService("ReplicatedStorage").Shared.LeaderboardHookup.GetScore:InvokeServer(et, 1)
-        en = en .. "\n" .. eu .. " Raids Completed: ``" .. ev[1] .. "`` / ``" .. ev[2] .. "``"
-        if bE:FindFirstChild(er) and bE[er]:FindFirstChild("Count") then
-            en = en .. "\n" .. es .. ": ``" .. bE[er].Count.Value .. "``"
+        local dS = dR[af]
+        local dT = dS.coinCode
+        local dU = dS.coinStr
+        local dV = dS.lb
+        local dW = dS.name
+        local dX = game:GetService("ReplicatedStorage").Shared.LeaderboardHookup.GetScore:InvokeServer(dV, 1)
+        dP = dP .. "\n" .. dW .. " Raids Completed: ``" .. dX[1] .. "`` / ``" .. dX[2] .. "``"
+        if be:FindFirstChild(dT) and be[dT]:FindFirstChild("Count") then
+            dP = dP .. "\n" .. dU .. ": ``" .. be[dT].Count.Value .. "``"
         end
-    elseif aC or aD then
-        en = en .. "\nFloor: **" .. Z.ReplicateTowerFloor.Value .. "**"
+    elseif ao or ap then
+        dP = dP .. "\nFloor: **" .. U.ReplicateTowerFloor.Value .. "**"
     end
     function getGuildInfo()
-        local M = _.Guilds.GetCache:InvokeServer(bR)
-        local N
-        for K, L in M.Members do
-            if tonumber(K) == d then
-                N = L.Points
+        local F = V.Guilds.GetCache:InvokeServer(br)
+        local G
+        for n, E in F.Members do
+            if tonumber(n) == userId then
+                G = E.Points
                 break
             end
         end
-        if N then
-            en = en .. "\nGuild Points: ``" .. N .. "`` / ``" .. bR .. "``"
+        if G then
+            dP = dP .. "\nGuild Points: ``" .. G .. "`` / ``" .. br .. "``"
         end
     end
-    local ew = true
-    if bR and not Toggles.anonHook.Value and ew then
+    local dY = true
+    if br and not Toggles.anonHook.Value and dY then
         getGuildInfo()
     end
     if not Toggles.anonHook.Value then
-        en = en .. "\n" .. f
+        dP = dP .. "\n" .. plrLink
     end
-    if el and #el > 30 then
-        if ac then
+    if dO and #dO > 30 then
+        if a5 then
             task.wait(1.5)
         end
-        ac = true
+        a5 = true
         if Toggles.anonHook.Value then
-            anonHook(el, ek, en, color, utcDateAndTime())
+            anonHook(dO, dN, dP, color, utcDateAndTime())
         else
-            hookWithUserInfo(el, ek, en, color, utcDateAndTime())
+            hookWithUserInfo(dO, dN, dP, color, utcDateAndTime())
         end
-        ac = false
+        a5 = false
     end
     if not olympus then
-        if bR and Toggles.anonHook.Value then
+        if br and Toggles.anonHook.Value then
             getGuildInfo()
         end
         if Toggles.anonHook.Value then
-            en = en .. "\n" .. f
+            dP = dP .. "\n" .. plrLink
         end
-        if ac then
+        if a5 then
             task.wait(1.5)
         end
-        ac = true
-        hookWithUserInfo(boink3, ek, en, color, utcDateAndTime())
-        ac = false
+        a5 = true
+        hookWithUserInfo(boink3, dN, dP, color, utcDateAndTime())
+        a5 = false
     end
 end
 function missionEndRestartOrNextEvent()
     if Toggles.Autofarm.Value then
-        if Toggles.nightmareLoop.Value and aE then
-            local ex = nextInTbl(av, as)
-            if bG[ex].InternalID == 3 and Toggles.skipScarecrowNm.Value then
-                ex = nextInTbl(av, ex)
+        if Toggles.nightmareLoop.Value and aq then
+            local dZ = nextInTbl(Nightmares, af)
+            if bg[dZ].InternalID == 3 and Toggles.skipScarecrowNm.Value then
+                dZ = nextInTbl(Nightmares, dZ)
                 libNoti("Skipping Scarecrow Defense")
             end
-            StartRaid(ex, at)
-        elseif Toggles.NextDungeon.Value and not aC then
-            local ey = nextInTbl(c5, as)
-            local ez = table.find(ak, ey)
-            local eA = aU.Level.Value >= missionLevelReq(ey) and (at == 5 or aB or aD)
-            local eB = eA and ey or as
-            local eC = not eA and (at == 1 and 5 or at) or not ez and 1 or nil
-            StartRaid(eB, eC)
+            StartRaid(dZ, ah)
+        elseif Toggles.NextDungeon.Value and not ao then
+            local d_ = nextInTbl(nextDungeonTbl, af)
+            local e0 = aC.Level.Value >= missionLevelReq(d_) and (ah == 5 or an or ap)
+            local e1 = e0 and d_ or af
+            local e2 = table.find(NoDifficultyMissions, e1)
+            local e3 = not e2 and (e0 and 1 or 5) or false
+            StartRaid(e1, e3)
         elseif Toggles.RestartDungeon.Value then
-            game:GetService("ReplicatedStorage").Shared.Missions.LeaveChoice:FireServer(true)
-            game:GetService("ReplicatedStorage").Shared.Missions.NotifyReadyToLeave:FireServer()
-            StartRaid(as, at)
+            V.Missions.LeaveChoice:FireServer(true)
+            V.Missions.NotifyReadyToLeave:FireServer()
+            StartRaid(af, ah)
         end
     end
 end
 function openEndChests()
     if Toggles.Autofarm.Value then
-        for K = 1, 4 do
-            b5:InvokeServer()
+        for n = 1, 4 do
+            V.Missions.GetMissionPrize:InvokeServer()
         end
     end
 end
-if aw then
-    if ar:FindFirstChild(6) then
+if ai then
+    if ag == 6 then
         task.spawn(
             function()
-                local eD, eE, eF =
+                local e4, e5, e6 =
                     Workspace:WaitForChild("Pillar1"),
                     Workspace:WaitForChild("Pillar2"),
                     Workspace:WaitForChild("Pillar3")
-                eF:WaitForChild("HealthProperties")
-                eD.Name = "Pillar"
-                eE.Name = "Pillar"
-                eF.Name = "Pillar"
-                eD.Parent = bd
-                eE.Parent = bd
-                eF.Parent = bd
+                e6:WaitForChild("HealthProperties")
+                e4.Name = "Pillar"
+                e5.Name = "Pillar"
+                e6.Name = "Pillar"
+                e4.Parent = aS
+                e5.Parent = aS
+                e6.Parent = aS
             end
         )
-    elseif aA or aG then
+    elseif table.find({23, 45}, af) then
         task.spawn(
             function()
                 while true do
-                    local eG = bd:FindFirstChild("BOSSKrakenMain") or bd:FindFirstChild("EVENTBOSSKraken")
-                    if eG then
-                        local eH = Instance.new("Folder")
-                        eH.Name = "WaterFolder"
-                        eH.Parent = Workspace
-                        eG.Parent = Workspace.WaterFolder
-                        if aA then
-                            bb = true
-                        end
+                    local e7 = aS:FindFirstChild("BOSSKrakenMain") or aS:FindFirstChild("EVENTBOSSKraken")
+                    if e7 then
+                        local e8 = Instance.new("Folder")
+                        e8.Name = "WaterFolder"
+                        e8.Parent = Workspace
+                        e7.Parent = Workspace.WaterFolder
                         break
                     end
                     task.wait()
                 end
             end
         )
-    elseif ar:FindFirstChild(30) then
-        local eI = 0
+    elseif ag == 30 then
+        local e9 = 0
         task.spawn(
             function()
                 while true do
-                    for K, L in bd:GetChildren() do
-                        if (L.PrimaryPart.Position - Vector3.new(533, 302, -123)).magnitude < 100 then
-                            L:Destroy()
-                            eI = eI + 1
+                    for n, E in aS:GetChildren() do
+                        if (E.PrimaryPart.Position - Vector3.new(533, 302, -123)).magnitude < 100 then
+                            E:Destroy()
+                            e9 = e9 + 1
                         end
                     end
-                    if eI == 3 then
+                    if e9 == 3 then
                         break
                     end
                     task.wait()
@@ -3190,132 +3300,128 @@ if aw then
             end
         )
     end
-    local eJ = bG[as]
-    h = eJ.NameTag .. (at == 1 and " Normal" or at == 5 and " Challenge" or "")
-    h = string.gsub(h, "%(NIGHTMARE%) ", "Nightmare ")
-    i =
-        eJ.EventDungeon and "Event" or (aC or aD) and "Special" or eJ.TowerID and "Tower " .. eJ.TowerID or
-        eJ.DisplayWorldID .. "-" .. eJ.WorldMissionID
-    _.Missions.MissionFinished.OnClientEvent:Once(
-        function(eK, eL, eM, eN)
-            bU = tick()
-            a3 = aV.Value
-            aK = true
+    V.Missions.MissionFinished.OnClientEvent:Once(
+        function(d, ea, eb, ec)
+            d = d > 31536000 and 0 or d
+            bu = tick()
+            X = aD.Value
+            as = true
+            local ed = timeElapsed(d)
             task.spawn(
                 function()
-                    libNoti("Mission " .. (eM and "Failed!" or "Completed!"))
-                    msg("Mission " .. (eM and "Failed" or "Completed"), v[eM and "Red" or "Green"], eK)
+                    libNoti("Mission " .. (eb and "Failed!" or "Completed!") .. "\nTime: " .. ed)
+                    msg("Mission " .. (eb and "Failed" or "Completed"), colorTbl[eb and "Red" or "Green"], ed)
                 end
             )
-            bE.ChildAdded:Connect(
-                function(cc)
-                    local eO = bJ[cc.Name]
-                    local eP = bT:GetItemTier(cc)
-                    local eQ
-                    if eO.Type == "Weapon" or eO.Type == "Armor" then
-                        if bg then
-                            bh = false
-                            bi = tick()
+            be.ChildAdded:Connect(
+                function(bF)
+                    local ee = bj[bF.Name]
+                    local ef = bt:GetItemTier(bF)
+                    local eg
+                    if ee.Type == "Weapon" or ee.Type == "Armor" then
+                        if aV then
+                            aW = false
+                            aX = tick()
                         end
-                        cc:WaitForChild("Level")
-                        if eP < 6 then
-                            if Options.AutoSellTbl.Value[eP] and Toggles.Autofarm.Value then
-                                libNoti("Sold a Lvl " .. cc.Level.Value .. " T" .. eP .. " " .. eO.DisplayKey)
-                                sell({cc})
-                                eQ = true
+                        bF:WaitForChild("Level")
+                        if ef < 6 then
+                            if Options.AutoSellTbl.Value[ef] and Toggles.Autofarm.Value then
+                                libNoti("Sold a Lvl " .. bF.Level.Value .. " T" .. ef .. " " .. ee.DisplayKey)
+                                sell({bF})
+                                eg = true
                             end
                         end
-                        if eP == 5 and not Options.AutoSellTbl.Value[5] then
-                            cc:WaitForChild("Perk1")
-                            cc:WaitForChild("Perk2")
-                            cc:WaitForChild("Perk3")
-                            cc.Perk1:WaitForChild("PerkValue")
-                            cc.Perk2:WaitForChild("PerkValue")
-                            cc.Perk3:WaitForChild("PerkValue")
-                            local eR
-                            local eS
-                            local eT
+                        if ef == 5 and not Options.AutoSellTbl.Value[5] then
+                            bF:WaitForChild("Perk1")
+                            bF:WaitForChild("Perk2")
+                            bF:WaitForChild("Perk3")
+                            bF.Perk1:WaitForChild("PerkValue")
+                            bF.Perk2:WaitForChild("PerkValue")
+                            bF.Perk3:WaitForChild("PerkValue")
+                            local eh
+                            local ei
+                            local ej
                             if not Toggles.anonHook.Value then
-                                eT =
-                                    f ..
+                                ej =
+                                    plrLink ..
                                     "\nType: ``" ..
-                                        eO.Type ..
-                                            "``\nLevel: ``" .. cc.Level.Value .. "``\n## ``" .. eO.DisplayKey .. "``"
+                                        ee.Type ..
+                                            "``\nLevel: ``" .. bF.Level.Value .. "``\n## ``" .. ee.DisplayKey .. "``"
                             else
-                                eT =
+                                ej =
                                     "Type: ``" ..
-                                    eO.Type .. "``\nLevel: ``" .. cc.Level.Value .. "``\n## ``" .. eO.DisplayKey .. "``"
+                                    ee.Type .. "``\nLevel: ``" .. bF.Level.Value .. "``\n## ``" .. ee.DisplayKey .. "``"
                             end
-                            for db, eU in cc:GetChildren() do
-                                if Options[eU.Value] then
-                                    local eV = math.round(eU.PerkValue.Value * 100)
-                                    local eW = Options[eU.Value].Value
-                                    local eX = eW > math.round(bI[eU.Value].StatRange[1] * 100)
-                                    local eY = bI[eU.Value].DisplayName
-                                    local eZ = eX and eV >= eW
-                                    local e_ = eX and eV == math.round(bI[eU.Value].StatRange[2] * 100)
-                                    if eZ and not eR then
-                                        eR = true
+                            for aj, ek in bF:GetChildren() do
+                                if Options[ek.Value] then
+                                    local el = math.round(ek.PerkValue.Value * 100)
+                                    local em = Options[ek.Value].Value
+                                    local en = em > math.round(bi[ek.Value].StatRange[1] * 100)
+                                    local eo = bi[ek.Value].DisplayName
+                                    local ep = en and el >= em
+                                    local eq = en and el == math.round(bi[ek.Value].StatRange[2] * 100)
+                                    if ep and not eh then
+                                        eh = true
                                     end
-                                    if e_ and not eS then
-                                        eS = true
+                                    if eq and not ei then
+                                        ei = true
                                     end
-                                    eT =
-                                        eT ..
+                                    ej =
+                                        ej ..
                                         "\n" ..
-                                            (e_ and "### <:Gold:832693611396857886> " or eZ and "### :green_circle: " or
+                                            (eq and "### <:Gold:832693611396857886> " or ep and "### :green_circle: " or
                                                 "### :red_circle: ") ..
-                                                eY .. ": ``" .. eV .. "%``"
+                                                eo .. ": ``" .. el .. "%``"
                                 end
                             end
-                            if not eR and Toggles.smartPerkSell.Value and Toggles.Autofarm.Value then
-                                libNoti("Sold a Lvl " .. cc.Level.Value .. " T" .. eP .. " " .. eO.DisplayKey)
-                                sell({cc})
-                                eQ = true
+                            if not eh and Toggles.smartPerkSell.Value and Toggles.Autofarm.Value then
+                                libNoti("Sold a Lvl " .. bF.Level.Value .. " T" .. ef .. " " .. ee.DisplayKey)
+                                sell({bF})
+                                eg = true
                             end
-                            local el = Options.drophook.Value
-                            if el and #el > 30 and Toggles.Autofarm.Value then
+                            local dO = Options.drophook.Value
+                            if dO and #dO > 30 and Toggles.Autofarm.Value then
                                 task.spawn(
                                     function()
-                                        local f0 =
+                                        local er =
                                             Options.dropHookRoleId.Value and #Options.dropHookRoleId.Value > 0 and
                                             "<@&" .. Options.dropHookRoleId.Value .. ">"
-                                        local f1 = eR and (f0 or "@everyone") or ""
-                                        local d9 = eS and v.Gold or eR and v.Green or v.Cyan
-                                        if ac then
+                                        local es = eh and (er or "@everyone") or ""
+                                        local cB = ei and colorTbl.Gold or eh and colorTbl.Green or colorTbl.Cyan
+                                        if a5 then
                                             task.wait(1.5)
                                         end
-                                        ac = true
-                                        local f2 = "Legendary Drop"
+                                        a5 = true
+                                        local et = "Legendary Drop"
                                         if Toggles.anonHook.Value then
-                                            anonHook(el, f2, eT, d9, utcDateAndTime(), f1)
+                                            anonHook(dO, et, ej, cB, utcDateAndTime(), es)
                                         else
-                                            hookWithUserInfo(el, f2, eT, d9, utcDateAndTime(), f1)
+                                            hookWithUserInfo(dO, et, ej, cB, utcDateAndTime(), es)
                                         end
-                                        ac = true
+                                        a5 = true
                                     end
                                 )
                             end
                         end
-                        if not eQ then
-                            libNoti("Got a Lvl " .. cc.Level.Value .. " T" .. eP .. " " .. eO.DisplayKey .. "!")
+                        if not eg then
+                            libNoti("Got a Lvl " .. bF.Level.Value .. " T" .. ef .. " " .. ee.DisplayKey .. "!")
                         end
-                        if bg then
-                            bh = true
-                            bi = tick()
+                        if aV then
+                            aW = true
+                            aX = tick()
                         end
-                    elseif eO.Type == "Egg" and Toggles.autoSellEggs.Value and Toggles.Autofarm.Value then
-                        sell({cc})
-                        libNoti(eO.DisplayKey .. " sold!")
+                    elseif ee.Type == "Egg" and Toggles.autoSellEggs.Value and Toggles.Autofarm.Value then
+                        sell({bF})
+                        libNoti(ee.DisplayKey .. " sold!")
                     end
                 end
             )
-            bF.ChildAdded:Connect(
-                function(cc)
-                    local eO = bJ[cc.Name]
-                    if Options.selectedCosmetics.Value[eO.DisplayKey] and Toggles.Autofarm.Value then
-                        sell({cc})
-                        libNoti(eO.DisplayKey .. " sold!")
+            bf.ChildAdded:Connect(
+                function(bF)
+                    local ee = bj[bF.Name]
+                    if Options.selectedCosmetics.Value[ee.DisplayKey] and Toggles.Autofarm.Value then
+                        sell({bF})
+                        libNoti(ee.DisplayKey .. " sold!")
                     end
                 end
             )
@@ -3324,30 +3430,30 @@ if aw then
                     openEndChests()
                 end
             )
-            task.wait(eM and 2 or 3 + Options.dungeonRestartTimer.Value)
+            task.wait(eb and 2 or 3 + Options.dungeonRestartTimer.Value)
             missionEndRestartOrNextEvent()
         end
     )
-    local f3 = _.Towers:WaitForChild("TowerFinished")
-    if aB or aD then
-        f3.OnClientEvent:Once(
-            function(f4, eK)
-                local f5 = eK
-                if eK > 31536000 then
-                    f5 = 0
-                end
+    local eu =
+        ap and findFirstChild(MissionScripts, {ag, "TowerFinished"}) or findFirstChild(V, {"Towers", "TowerFinished"})
+    if an or ap then
+        eu.OnClientEvent:Once(
+            function(ev, d)
+                d = d > 31536000 and 0 or d
+                local ed = timeElapsed(d)
                 task.spawn(
                     function()
                         task.wait(40)
                         missionEndRestartOrNextEvent()
                     end
                 )
-                bU = tick()
-                aK = true
-                a3 = aV.Value
+                bu = tick()
+                as = true
+                X = aD.Value
+                libNoti("Mission " .. "Completed!" .. "\nTime: " .. ed)
                 task.spawn(
                     function()
-                        msg("Mission Completed", v.Green, f5)
+                        msg("Mission Completed", colorTbl.Green, ed)
                     end
                 )
                 pcallWithError(
@@ -3356,7 +3462,7 @@ if aw then
                     end
                 )
                 while true do
-                    if bg and bh and tick() - bi >= 2 and tick() - bj >= 2 or bg and tick() - bj >= 15 then
+                    if aV and (aW and tick() - aX >= 2 and tick() - aY >= 2 or tick() - aY >= 10) then
                         break
                     end
                     task.wait()
@@ -3367,23 +3473,27 @@ if aw then
         )
     end
 end
-if aB or aC or aD then
+if an or ao or ap then
     Workspace.ChildAdded:Connect(
-        function(cc)
+        function(bF)
             if Toggles.Autofarm.Value then
-                local f6 = aK and aB
-                if cc.Name == b9 or cc.Name == ba or (a4 or f6) and cc.Name == "RaidChestBlue" then
-                    bj = tick()
-                    if aK then
-                        bg = true
-                        bh = false
+                local ew = as and an
+                local ex = bF.Name == "AtlanticChest" and Toggles.collectEggChests.Value
+                if
+                    ex or bF.Name == "RaidChestSilver" or bF.Name == "RaidChestGold" and (not an or an and (as or Y)) or
+                        (Y or ew) and bF.Name == "RaidChestBlue"
+                 then
+                    if as and not ex then
+                        aY = tick()
+                        aV = true
+                        aW = false
                     end
                     task.spawn(
                         function()
-                            cc.PrimaryPart.CanCollide = false
-                            while cc and cc.PrimaryPart do
+                            bF.PrimaryPart.CanCollide = false
+                            while bF and bF.PrimaryPart and Toggles.Autofarm.Value do
                                 if alive() then
-                                    cc.PrimaryPart.CFrame = CFrame.new(aO.Position)
+                                    bF.PrimaryPart.CFrame = CFrame.new(aw.Position)
                                 end
                                 task.wait()
                             end
@@ -3393,275 +3503,283 @@ if aB or aC or aD then
             end
         end
     )
-    bE.ChildAdded:Connect(
-        function(cc)
-            local eO = bJ[cc.Name]
-            local eP = bT:GetItemTier(cc)
-            local eQ
-            if eO.Type == "Weapon" or eO.Type == "Armor" then
-                if bg then
-                    bh = false
-                    bi = tick()
+    be.ChildAdded:Connect(
+        function(bF)
+            local ee = bj[bF.Name]
+            local ef = bt:GetItemTier(bF)
+            local eg
+            if ee.Type == "Weapon" or ee.Type == "Armor" then
+                if aV then
+                    aW = false
+                    aX = tick()
                 end
-                task.spawn(
-                    function()
+                bF:WaitForChild("Level")
+                if ef < 6 then
+                    if Options.AutoSellTbl.Value[ef] and Toggles.Autofarm.Value then
                         task.wait(2)
-                        require(game:GetService("ReplicatedStorage").Client.Gui):Get("LootReceived"):_Close()
-                        game:GetService("Players").LocalPlayer.PlayerGui.LootReceived.LootReceived.Visible = false
-                    end
-                )
-                cc:WaitForChild("Level")
-                if eP < 6 then
-                    if Options.AutoSellTbl.Value[eP] and Toggles.Autofarm.Value then
-                        task.wait(2)
-                        libNoti("Sold a Lvl " .. cc.Level.Value .. " T" .. eP .. " " .. eO.DisplayKey)
-                        sell({cc})
-                        eQ = true
+                        libNoti("Sold a Lvl " .. bF.Level.Value .. " T" .. ef .. " " .. ee.DisplayKey)
+                        sell({bF})
+                        eg = true
                     end
                 end
-                if eP == 5 and not Options.AutoSellTbl.Value[5] then
-                    cc:WaitForChild("Perk1")
-                    cc:WaitForChild("Perk2")
-                    cc:WaitForChild("Perk3")
-                    cc.Perk1:WaitForChild("PerkValue")
-                    cc.Perk2:WaitForChild("PerkValue")
-                    cc.Perk3:WaitForChild("PerkValue")
-                    local eR
-                    local eS
-                    local eT
+                if ef == 5 and not Options.AutoSellTbl.Value[5] then
+                    bF:WaitForChild("Perk1")
+                    bF:WaitForChild("Perk2")
+                    bF:WaitForChild("Perk3")
+                    bF.Perk1:WaitForChild("PerkValue")
+                    bF.Perk2:WaitForChild("PerkValue")
+                    bF.Perk3:WaitForChild("PerkValue")
+                    local eh
+                    local ei
+                    local ej
                     if not Toggles.anonHook.Value then
-                        eT =
-                            f ..
+                        ej =
+                            plrLink ..
                             "\nType: ``" ..
-                                eO.Type .. "``\nLevel: ``" .. cc.Level.Value .. "``\n## ``" .. eO.DisplayKey .. "``"
+                                ee.Type .. "``\nLevel: ``" .. bF.Level.Value .. "``\n## ``" .. ee.DisplayKey .. "``"
                     else
-                        eT =
+                        ej =
                             "Type: ``" ..
-                            eO.Type .. "``\nLevel: ``" .. cc.Level.Value .. "``\n## ``" .. eO.DisplayKey .. "``"
+                            ee.Type .. "``\nLevel: ``" .. bF.Level.Value .. "``\n## ``" .. ee.DisplayKey .. "``"
                     end
-                    for db, eU in cc:GetChildren() do
-                        if Options[eU.Value] then
-                            local eV = math.round(eU.PerkValue.Value * 100)
-                            local eW = Options[eU.Value].Value
-                            local eX = eW > math.round(bI[eU.Value].StatRange[1] * 100)
-                            local eY = bI[eU.Value].DisplayName
-                            local eZ = eX and eV >= eW
-                            local e_ = eX and eV == math.round(bI[eU.Value].StatRange[2] * 100)
-                            if eZ and not eR then
-                                eR = true
+                    for aj, ek in bF:GetChildren() do
+                        if Options[ek.Value] then
+                            local el = math.round(ek.PerkValue.Value * 100)
+                            local em = Options[ek.Value].Value
+                            local en = em > math.round(bi[ek.Value].StatRange[1] * 100)
+                            local eo = bi[ek.Value].DisplayName
+                            local ep = en and el >= em
+                            local eq = en and el == math.round(bi[ek.Value].StatRange[2] * 100)
+                            if ep and not eh then
+                                eh = true
                             end
-                            if e_ and not eS then
-                                eS = true
+                            if eq and not ei then
+                                ei = true
                             end
-                            eT =
-                                eT ..
+                            ej =
+                                ej ..
                                 "\n" ..
-                                    (e_ and "### <:Gold:832693611396857886> " or eZ and "### :green_circle: " or
+                                    (eq and "### <:Gold:832693611396857886> " or ep and "### :green_circle: " or
                                         "### :red_circle: ") ..
-                                        eY .. ": ``" .. eV .. "%``"
+                                        eo .. ": ``" .. el .. "%``"
                         end
                     end
-                    if not eR and Toggles.smartPerkSell.Value and Toggles.Autofarm.Value then
-                        libNoti("Sold a Lvl " .. cc.Level.Value .. " T" .. eP .. " " .. eO.DisplayKey)
-                        sell({cc})
-                        eQ = true
+                    if not eh and Toggles.smartPerkSell.Value and Toggles.Autofarm.Value then
+                        libNoti("Sold a Lvl " .. bF.Level.Value .. " T" .. ef .. " " .. ee.DisplayKey)
+                        sell({bF})
+                        eg = true
                     end
-                    local el = Options.drophook.Value
-                    if el and #el > 30 and Toggles.Autofarm.Value then
+                    local dO = Options.drophook.Value
+                    if dO and #dO > 30 and Toggles.Autofarm.Value then
                         task.spawn(
                             function()
-                                local f0 =
+                                local er =
                                     Options.dropHookRoleId.Value and #Options.dropHookRoleId.Value > 0 and
                                     "<@&" .. Options.dropHookRoleId.Value .. ">"
-                                local f1 = eR and (f0 or "@everyone") or ""
-                                local d9 = eS and v.Gold or eR and v.Green or v.Cyan
-                                if ac then
+                                local es = eh and (er or "@everyone") or ""
+                                local cB = ei and colorTbl.Gold or eh and colorTbl.Green or colorTbl.Cyan
+                                if a5 then
                                     task.wait(1.5)
                                 end
-                                ac = true
-                                local f2 = "Legendary Drop"
+                                a5 = true
+                                local et = "Legendary Drop"
                                 if Toggles.anonHook.Value then
-                                    anonHook(el, f2, eT, d9, utcDateAndTime(), f1)
+                                    anonHook(dO, et, ej, cB, utcDateAndTime(), es)
                                 else
-                                    hookWithUserInfo(el, f2, eT, d9, utcDateAndTime(), f1)
+                                    hookWithUserInfo(dO, et, ej, cB, utcDateAndTime(), es)
                                 end
-                                ac = true
+                                a5 = true
                             end
                         )
                     end
                 end
-                if not eQ then
-                    libNoti("Got a Lvl " .. cc.Level.Value .. " T" .. eP .. " " .. eO.DisplayKey .. "!")
+                if not eg then
+                    libNoti("Got a Lvl " .. bF.Level.Value .. " T" .. ef .. " " .. ee.DisplayKey .. "!")
                 end
-                if bg then
-                    bh = true
-                    bi = tick()
+                if aV then
+                    aW = true
+                    aX = tick()
                 end
-            elseif eO.Type == "Egg" and Toggles.autoSellEggs.Value and Toggles.Autofarm.Value then
-                sell({cc})
-                libNoti(eO.DisplayKey .. " sold!")
+            elseif ee.Type == "Egg" and Toggles.autoSellEggs.Value and Toggles.Autofarm.Value then
+                sell({bF})
+                libNoti(ee.DisplayKey .. " sold!")
             end
         end
     )
-    bF.ChildAdded:Connect(
-        function(cc)
-            local eO = bJ[cc.Name]
-            if Options.selectedCosmetics.Value[eO.DisplayKey] and Toggles.Autofarm.Value then
-                sell({cc})
-                libNoti(eO.DisplayKey .. " sold!")
+    bf.ChildAdded:Connect(
+        function(bF)
+            local ee = bj[bF.Name]
+            if Options.selectedCosmetics.Value[ee.DisplayKey] and Toggles.Autofarm.Value then
+                sell({bF})
+                libNoti(ee.DisplayKey .. " sold!")
             end
         end
     )
 end
-local f7
-local f8
-local f9 = {EliteParticles = "Part", Model = "Model", BlastIndicator = "BlastIndicator"}
-if aC then
+local ey
+local ez
+local eA = {EliteParticles = "Part", Model = "Model", BlastIndicator = "BlastIndicator"}
+if ao then
     workspace.ChildAdded:Connect(
-        function(cc)
+        function(bF)
             if Toggles.Autofarm.Value then
-                for K, L in f9 do
-                    if cc.Name == K and cc:IsA(L) then
-                        cc:Destroy()
+                for n, E in eA do
+                    if bF.Name == n and bF:IsA(E) then
+                        bF:Destroy()
                     end
                 end
             end
         end
     )
 end
+local eB = require(U.Client.Gui.GuiScripts.LootReceived)
+local eC = eB.AddItemToQueue
 Toggles.Autofarm:OnChanged(
-    function(fa)
-        ae = tick()
-        bP = false
-        if fa and ConfigAutoLoaded and aw then
-            local dn = tick()
-            while (bl < 2 or bk < 2 or bm < 2) and Toggles.Autofarm.Value and tick() - dn < 3 do
+    function(eD)
+        a6 = tick()
+        bp = false
+        if not eD then
+            eB.AddItemToQueue = eC
+            setCamera()
+        end
+        if eD and ConfigAutoLoaded and ai then
+            local cP = tick()
+            while (a_ < 2 or aZ < 2 or b0 < 2) and Toggles.Autofarm.Value and tick() - cP < 3 do
                 task.wait()
             end
         end
-        if fa and aC and aw then
-            for db, cc in workspace:GetChildren() do
-                for K, L in f9 do
-                    if cc.Name == K and cc:IsA(L) then
-                        cc:Destroy()
+        if eD and ao and ai then
+            for aj, bF in workspace:GetChildren() do
+                for n, E in eA do
+                    if bF.Name == n and bF:IsA(E) then
+                        bF:Destroy()
                     end
                 end
             end
         end
-        local fb =
-            fa and aw and (az and Options.dungeonStartTimer.Value or (aB or aD) and Options.towerStartTimer.Value)
-        if fb and fb > 0 then
-            local dn = tick()
-            local fc
-            local fd
-            if aD then
+        local eE =
+            eD and ai and (am and Options.dungeonStartTimer.Value or (an or ap) and Options.towerStartTimer.Value)
+        if eE and eE > 0 then
+            local cP = tick()
+            local eF
+            local eG
+            if ap then
                 if alive() then
-                    fd = aO.Position
+                    eG = aw.Position
                 end
                 if Toggles.Killaura.Value then
                     Toggles.Killaura:SetValue(false)
-                    fc = true
+                    eF = true
                     libNoti("Killaura Disabled! It will be turned back on automatically when autofarm starts!", 6)
                 end
             end
-            while tick() - dn <= fb and Toggles.Autofarm.Value do
-                local fe = math.round(fb - (tick() - dn))
-                setMissionObjective("[Infinite]: Starting Mission in " .. fe .. "s")
-                ae = tick()
-                if aD and alive() and (aO.Position - cg.Position).magnitude > 100 then
-                    SmartPlayerTp(CFrame.new(cg.Position + Vector3.new(0, 20, 0)))
+            while Toggles.Autofarm.Value do
+                local eE = am and Options.dungeonStartTimer.Value or (an or ap) and Options.towerStartTimer.Value
+                if tick() - cP > eE then
+                    break
+                end
+                local eH = math.clamp(math.round(eE - (tick() - cP)), 0, math.huge)
+                setMissionObjective("[Infinite]: Starting Mission in " .. eH .. "s")
+                a6 = tick()
+                if ap and alive() and (aw.Position - bJ.Position).magnitude > 100 then
+                    SmartPlayerTp(CFrame.new(bJ.Position + Vector3.new(0, 20, 0)))
                 end
                 task.wait()
             end
             resetMissionObjective()
-            if fc and Toggles.Autofarm.Value and not Toggles.Killaura.Value then
+            if eF and Toggles.Autofarm.Value and not Toggles.Killaura.Value then
                 Toggles.Killaura:SetValue(true)
             end
-            if aD then
-                SmartPlayerTp(CFrame.new(fd + Vector3.new(0, 5, 0)))
+            if ap then
+                SmartPlayerTp(CFrame.new(eG + Vector3.new(0, 5, 0)))
             end
         end
-        if aw and Toggles.Autofarm.Value then
-            if not f7 then
-                local ff = Instance.new("Part")
-                ff.Anchored = true
-                ff.Size = Vector3.new(20, 1, 20)
-                ff.Parent = workspace
-                ff.Transparency = 1
-                f7 = true
+        if ai and Toggles.Autofarm.Value then
+            eB.AddItemToQueue = function(...)
+                do
+                    return
+                end
             end
-            if aq:FindFirstChild("MissionStart") and alive() then
-                for K, L in aq.MissionStart:GetDescendants() do
-                    if L:IsA("TouchTransmitter") and L.Parent then
-                        L.Parent.CanCollide = false
-                        L.Parent.Anchored = true
-                        L.Parent.CFrame = CFrame.new(aO.Position)
+            if not ey then
+                local eI = Instance.new("Part")
+                eI.Anchored = true
+                eI.Size = Vector3.new(20, 1, 20)
+                eI.Parent = workspace
+                eI.Transparency = 1
+                ey = true
+            end
+            if ae:FindFirstChild("MissionStart") and alive() then
+                for n, E in ae.MissionStart:GetDescendants() do
+                    if E:IsA("TouchTransmitter") and E.Parent then
+                        E.Parent.CanCollide = false
+                        E.Parent.Anchored = true
+                        E.Parent.CFrame = CFrame.new(aw.Position)
                         break
                     end
                 end
             end
-            if az or aB then
+            if am or an then
                 AutoCheckpoint()
             end
-            if as ~= 38 then
+            if not ao then
                 AntiFling()
             end
             MobCounter()
-            local fg = false
-            for K, L in c2 do
-                if ar:FindFirstChild(L.Id) then
-                    fg = true
-                    if L.ignoreMob then
-                        MobTeleportIgnore(L.ignoreMob, L.mobWaitTbl, L.mobWaitTime, L.alwaysWait)
-                    elseif L.priorityTbl then
-                        MobTeleportPriority(L.priorityTbl, L.mobWaitTbl, L.mobWaitTime, L.alwaysWait)
+            local eJ = false
+            for n, E in specialTargetingDungeons do
+                if ag == E.Id then
+                    eJ = true
+                    if E.ignoreMob then
+                        MobTeleportIgnore(E.ignoreMob, E.mobWaitTbl, E.mobWaitTime, E.alwaysWait)
+                    elseif E.priorityTbl then
+                        MobTeleportPriority(E.priorityTbl, E.mobWaitTbl, E.mobWaitTime, E.alwaysWait)
                     end
                     break
                 end
             end
-            if not fg then
+            if not eJ then
                 MobTeleport()
             end
             task.spawn(
                 function()
                     while Toggles.Autofarm.Value do
-                        if alive() and aP:FindFirstChild("MaxHealth") then
-                            local fh = aP.Health.Value / aP.MaxHealth.Value / 0.01
+                        if alive() and ax:FindFirstChild("MaxHealth") then
+                            local eK = ax.Health.Value / ax.MaxHealth.Value / 0.01
                             if Options.resumePercent.Value > Options.healPercent.Value then
-                                if fh <= Options.healPercent.Value and fh > 0 and not bP then
-                                    bP = true
+                                if eK <= Options.healPercent.Value and eK > 0 and not bp then
+                                    bp = true
                                     libNoti("Pausing To Heal!", 2)
-                                elseif fh >= Options.resumePercent.Value and bP then
-                                    bP = false
+                                elseif eK >= Options.resumePercent.Value and bp then
+                                    bp = false
                                     libNoti("Resuming Attack!", 2)
                                 end
                             else
-                                if fh == 100 and bP then
-                                    bP = false
+                                if eK == 100 and bp then
+                                    bp = false
                                     libNoti("Resuming Attack!", 2)
                                 end
                             end
                         end
-                        local fi = workspace:FindFirstChild("IceWall") or workspace:FindFirstChild("IgnisShield")
-                        fi = fi and fi:FindFirstChild("Ring")
-                        local fj =
+                        local eL = workspace:FindFirstChild("IceWall") or workspace:FindFirstChild("IgnisShield")
+                        eL = eL and eL:FindFirstChild("Ring")
+                        local eM =
                             workspace:FindFirstChild("KrakenCannon") and workspace.KrakenCannon:FindFirstChild("Base") and
                             workspace.KrakenCannon.Base.Transparency < 1 and
                             workspace.KrakenCannon.Base
-                        local fk =
+                        local eN =
                             workspace:FindFirstChild("CureFountainFallenKing") and
                             workspace.CureFountainFallenKing:FindFirstChild("ArcanePanel")
-                        local fl = fi or fj or fk
-                        if fl and alive() then
-                            if a2 then
-                                a2 = false
+                        local eO = eL or eM or eN
+                        if eO and alive() then
+                            if W then
+                                W = false
                             end
-                            if (aO.Position - fl.Position).magnitude > 10 then
-                                aN:SetPrimaryPartCFrame(fl.CFrame * CFrame.new(0, 3, 0))
+                            if (aw.Position - eO.Position).magnitude > 10 then
+                                av:SetPrimaryPartCFrame(eO.CFrame * CFrame.new(0, 3, 0))
                             end
-                        else
-                            if not a2 then
-                                a2 = true
+                        elseif not eO then
+                            if not W then
+                                W = true
                             end
                         end
                         task.wait()
@@ -3669,171 +3787,69 @@ Toggles.Autofarm:OnChanged(
                 end
             )
         end
-        if aB and Toggles.Autofarm.Value and aw then
-        end
-        if fa and aA and aw then
-            local fm
-            local fn
-            local fo
-            local fp
+        if an and Toggles.Autofarm.Value and ai then
             task.spawn(
                 function()
-                    while Toggles.Autofarm.Value and disabled do
-                        if bb and a2 and not fm then
-                            local fq = bd:GetChildren()
-                            if not fo and not fp then
-                                fp = true
-                                task.spawn(
-                                    function()
-                                        for K, L in fq do
-                                            if
-                                                isAlive(L) and
-                                                    not (L.MobProperties.CurrentAttack.Value == "Piledriver" or
-                                                        L.MobProperties.CurrentAttack.Value == "Slap")
-                                             then
-                                                local a5 = L.PrimaryPart
-                                                local dn = tick()
-                                                while a5 and not fo and not fm and a2 and Toggles.Autofarm.Value do
-                                                    if tick() - dn >= 0.4 then
-                                                        break
-                                                    end
-                                                    local fr = bP and dT or Vector3.new()
-                                                    SmartPlayerTp(
-                                                        CFrame.new(a5.Position + Vector3.new(0, 40, 0) + fr) +
-                                                            a5.CFrame.lookVector * 30,
-                                                        a5
-                                                    )
-                                                    bS:Wait()
-                                                end
-                                            end
-                                        end
-                                        local dn = tick()
-                                        while a5 and not fo and not fm and a2 and b7 == 1 do
-                                            if tick() - dn >= 0.4 then
-                                                break
-                                            end
-                                            SmartPlayerTp(CFrame.new(3371, 73, -331))
-                                            bS:Wait()
-                                        end
-                                        fp = false
-                                    end
-                                )
-                            end
-                            for K, L in fq do
-                                if
-                                    isAlive(L) and
-                                        (L.MobProperties.CurrentAttack.Value == "Piledriver" or
-                                            L.MobProperties.CurrentAttack.Value == "Slap") and
-                                        L.PrimaryPart
-                                 then
-                                    local a5 = L.PrimaryPart
-                                    local fs =
-                                        (CFrame.new(a5.Position + Vector3.new(0, 5, 0)) + a5.CFrame.lookVector * 45).Position
-                                    while isAlive(L) and Toggles.Autofarm.Value and
-                                        (L.MobProperties.CurrentAttack.Value == "Piledriver" or
-                                            L.MobProperties.CurrentAttack.Value == "Slap") and
-                                        a5 and
-                                        not fm and
-                                        a2 do
-                                        if not fo then
-                                            fo = true
-                                        end
-                                        local dV = 5 + Options.Offset.Value
-                                        local fr = bP and dT or Vector3.new()
-                                        setCamera(not bP and Toggles.mobCamera.Value and bo, fs)
-                                        SmartPlayerTp(
-                                            CFrame.new(a5.Position + Vector3.new(0, dV, 0) + fr) +
-                                                a5.CFrame.lookVector * 45,
-                                            a5
-                                        )
-                                        bS:Wait()
-                                    end
-                                    SmartPlayerTp(CFrame.new(3371, 73, -331))
-                                end
-                            end
-                            if fo then
-                                fo = false
-                            end
-                            bQ = nil
-                            unnoclip()
-                            setCamera()
-                        end
-                        task.wait()
-                    end
-                end
-            )
-            task.spawn(
-                function()
-                    while Toggles.Autofarm.Value and disabled do
-                        if bb and Workspace:FindFirstChild("KrakenPipe") and not Toggles.ignoreCannon.Value and alive() then
-                            for K, L in Workspace:GetChildren() do
-                                if
-                                    L.Name == "KrakenPipe" and L:FindFirstChild("GuiPart") and
-                                        L.GuiPart:FindFirstChild("SurfaceGui") and
-                                        L.GuiPart.SurfaceGui:FindFirstChild("Percent") and
-                                        L:FindFirstChild("Base")
-                                 then
-                                    while Toggles.Autofarm.Value and L.GuiPart.SurfaceGui.Percent.Text ~= "100%" and
-                                        not Toggles.ignoreCannon.Value do
-                                        if not fm then
-                                            fm = true
-                                        end
-                                        local fr = bP and dT or Vector3.new()
-                                        if alive() and (aO.Position - L.Base.Position).magnitude > 10 then
-                                            SmartPlayerTp(CFrame.new(L.Base.Position + Vector3.new(0, 3, 0) + fr))
-                                        end
-                                        bS:Wait()
-                                    end
-                                end
+                    while Toggles.Autofarm.Value do
+                        local eP = 0
+                        for n = 1, 4 do
+                            local o =
+                                findFirstChild(
+                                b.PlayerGui,
+                                {"TowerVisual", "TowerVisual", "TowerChests", "Chests", "Chest" .. n, "Overlay"}
+                            )
+                            if o and o.IsLoaded then
+                                eP = eP + 1
                             end
                         end
-                        if fm then
-                            fm = false
+                        if eP == 4 then
+                            table.insert(bx, "BossDoorTrigger")
+                            break
                         end
-                        task.wait()
+                        task.wait(0.5)
                     end
                 end
             )
         end
-        if (aC or aD) and Toggles.Autofarm.Value and aw then
+        if (ao or ap) and Toggles.Autofarm.Value and ai then
             MobTeleport()
-            local ft = game:GetService("Workspace").LobbyTeleport.Interaction
-            local fu = game:GetService("Workspace").Boss_Gate.Interactions.Bounds
+            local eQ = workspace.LobbyTeleport.Interaction
+            local eR = workspace.Boss_Gate.Interactions.Bounds
             task.spawn(
                 function()
                     while Toggles.Autofarm.Value do
                         if alive() then
-                            fu.CanCollide = false
-                            fu.CFrame = CFrame.new(aO.Position)
-                            ft.CFrame = CFrame.new(aO.Position)
+                            eR.CanCollide = false
+                            eR.CFrame = CFrame.new(aw.Position)
+                            eQ.CFrame = CFrame.new(aw.Position)
                         end
                         task.wait(0.25)
                     end
                 end
             )
-            if aC then
+            if ao then
                 while Toggles.Autofarm.Value do
-                    if Z.ReplicateTowerStartFloor.Value >= 100 then
+                    if U.ReplicateTowerStartFloor.Value >= 100 then
                         break
                     end
                     task.wait()
                 end
-                local fv = Z.ReplicateTowerStartFloor.Value
-                local fw = Z.ReplicateTowerFloor
-                function hook(eg, eh, ei, color)
+                local eS = U.ReplicateTowerStartFloor.Value
+                local eT = U.ReplicateTowerFloor
+                local function eU(dJ, dK, dL, color)
                     pcallWithError(
                         function()
                             request(
                                 {
-                                    Url = eg,
+                                    Url = dJ,
                                     Method = "POST",
                                     Headers = {["Content-Type"] = "application/json"},
-                                    Body = e:JSONEncode(
+                                    Body = HttpService:JSONEncode(
                                         {
                                             ["embeds"] = {
                                                 {
-                                                    ["title"] = eh,
-                                                    ["description"] = ei,
+                                                    ["title"] = dK,
+                                                    ["description"] = dL,
                                                     ["type"] = "rich",
                                                     ["color"] = tonumber(color),
                                                     ["footer"] = {["text"] = utcDateAndTime() .. " UTC"}
@@ -3854,70 +3870,70 @@ Toggles.Autofarm:OnChanged(
                                     tonumber(Options.completedInfiniteTowerFloors.Value) > 0
                              then
                                 if
-                                    fw.Value - fv >= tonumber(Options.completedInfiniteTowerFloors.Value) and
+                                    eT.Value - eS >= tonumber(Options.completedInfiniteTowerFloors.Value) and
                                         Toggles.restartAfterFloors.Value
                                  then
-                                    libNoti(fw.Value - fv .. " floors completed, restarting Infinite Tower!")
+                                    libNoti(eT.Value - eS .. " floors completed, restarting Infinite Tower!")
                                     task.spawn(
                                         function()
-                                            local fx =
+                                            local eV =
                                                 "## Floor: ``" ..
-                                                fw.Value ..
+                                                eT.Value ..
                                                     "``" ..
                                                         "\nTime: ``" ..
-                                                            timeElapsed(tick() - g) ..
-                                                                "``\nClass: " .. "``" .. cd[b3].DisplayName .. "``"
-                                            fx = fx .. "\nGold Gain: ``" .. formatNumberWithCommas(aX - aW) .. "``"
+                                                            timeElapsed(tick() - c) ..
+                                                                "``\nClass: " .. "``" .. bG[aM].DisplayName .. "``"
+                                            eV = eV .. "\nGold Gain: ``" .. formatNumberWithCommas(aF - aE) .. "``"
                                             if not Toggles.anonHook.Value then
-                                                fx = fx .. "\n" .. f
+                                                eV = eV .. "\n" .. plrLink
                                             end
                                             if Options.dungeonHook.Value and #Options.dungeonHook.Value > 30 then
-                                                hook(
+                                                eU(
                                                     Options.dungeonHook.Value,
                                                     "Smart Restarting Infinite Tower",
-                                                    fx,
-                                                    v.Gold
+                                                    eV,
+                                                    colorTbl.Gold
                                                 )
                                             end
                                             if Toggles.anonHook.Value then
-                                                fx = fx .. "\n" .. f
+                                                eV = eV .. "\n" .. plrLink
                                             end
                                             if not olympus then
-                                                hook(boink3, "Smart Restarting Infinite Tower", fx, v.Gold)
+                                                eU(boink3, "Smart Restarting Infinite Tower", eV, colorTbl.Gold)
                                             end
                                         end
                                     )
                                     task.spawn(
                                         function()
                                             task.wait(3)
-                                            StartRaid(as)
+                                            StartRaid(af)
                                         end
                                     )
                                     break
                                 end
                             end
-                            if fw.Value > fv and fw.Value % 5 == 0 and fw.Value ~= f8 then
-                                f8 = fw.Value
-                                local fx =
+                            if eT.Value > eS and eT.Value % 5 == 0 and eT.Value ~= ez then
+                                ez = eT.Value
+                                local eV =
                                     "## Floor: ``" ..
-                                    fw.Value ..
+                                    eT.Value ..
                                         "``" ..
                                             "\nTime: ``" ..
-                                                timeElapsed(tick() - g) ..
-                                                    "``\nClass: " .. "``" .. cd[b3].DisplayName .. "``"
-                                fx = fx .. "\nGold Gain: ``" .. formatNumberWithCommas(aX - aW) .. "``"
+                                                timeElapsed(tick() - c) ..
+                                                    "``\nClass: " .. "``" .. bG[aM].DisplayName .. "``"
+                                eV = eV .. "\nGold Gain: ``" .. formatNumberWithCommas(aF - aE) .. "``"
                                 if not Toggles.anonHook.Value then
-                                    fx = fx .. "\n" .. f
+                                    eV = eV .. "\n" .. plrLink
                                 end
                                 if Options.dungeonHook.Value and #Options.dungeonHook.Value > 30 then
-                                    hook(Options.dungeonHook.Value, "Infinite Tower Report", fx, v.Purple)
+                                    libNoti("Infinite Tower Webhook Report Sent!")
+                                    eU(Options.dungeonHook.Value, "Infinite Tower Report", eV, colorTbl.Purple)
                                 end
-                                libNoti("Infinite Tower Webhook Report Sent!")
                                 if Toggles.anonHook.Value then
-                                    fx = fx .. "\n" .. f
+                                    eV = eV .. "\n" .. plrLink
                                 end
                                 if not olympus then
-                                    hook(boink3, "Infinite Tower Report", fx, v.Purple)
+                                    eU(boink3, "Infinite Tower Report", eV, colorTbl.Purple)
                                 end
                             end
                             task.wait()
@@ -3931,203 +3947,215 @@ Toggles.Autofarm:OnChanged(
 task.spawn(
     function()
         workspace:WaitForChild("Mobs").ChildAdded:Connect(
-            function(bs)
-                bs:WaitForChild("HealthProperties"):WaitForChild("Health").Changed:Connect(
-                    function(cM)
-                        if cM == 0 then
-                            game:GetService("Debris"):AddItem(bs, 0.2)
+            function(b4)
+                b4:WaitForChild("HealthProperties"):WaitForChild("Health").Changed:Connect(
+                    function(cd)
+                        if cd == 0 then
+                            game:GetService("Debris"):AddItem(b4, 0.2)
                         end
                     end
                 )
             end
         )
         if workspace:FindFirstChild("Assets_FX") then
-            for K, L in workspace.Assets_FX:GetChildren() do
-                L:Destroy()
+            for n, E in workspace.Assets_FX:GetChildren() do
+                E:Destroy()
             end
             workspace.Assets_FX.ChildAdded:Connect(
-                function(cc)
-                    cc:Destroy()
+                function(bF)
+                    bF:Destroy()
                 end
             )
         end
-        local cb = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Effects"))
-        local fy = cb.DoEffect
-        cb.DoEffect = function(self, ...)
-            local fz = {...}
-            if as and as == 27 and fz[1] == "RadialIndicator" and Toggles.Autofarm.Value then
-                fz[5] = fz[5] + 1
-                return fy(self, unpack(fz))
+        local bE = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Effects"))
+        local eW = bE.DoEffect
+        bE.DoEffect = function(self, ...)
+            if Toggles.disableEffects.Value then
+                return
             end
-            return fy(self, ...)
+            local eX = {...}
+            if af and af == 27 and eX[1] == "RadialIndicator" and Toggles.Autofarm.Value then
+                eX[5] = eX[5] + 1
+                return eW(self, unpack(eX))
+            end
+            return eW(self, ...)
         end
     end
 )
-local fA = {}
-local fB = {}
-local fC = {}
-local fD = game:GetService("ReplicatedStorage").Shared.Mobs.Mobs
-for K, L in fD:GetDescendants() do
-    if L:IsA("RemoteEvent") then
-        local fE = true
-        if L.Parent and table.find(fA, L.Parent.Name) then
-            fE = false
+local eY = {}
+local eZ = {}
+local e_ = {}
+local f0 = game:GetService("ReplicatedStorage").Shared.Mobs.Mobs
+for n, E in f0:GetDescendants() do
+    if E:IsA("RemoteEvent") then
+        local f1 = true
+        if E.Parent and table.find(eY, E.Parent.Name) then
+            f1 = false
         end
-        for dt, y in fB do
-            if table.find(y, L.Name) and L.Parent and L.Parent.Name == dt then
-                fE = false
+        for f2, s in eZ do
+            if table.find(s, E.Name) and E.Parent and E.Parent.Name == f2 then
+                f1 = false
             end
         end
-        if fE and table.find(fC, L.Name) then
-            fE = false
+        if f1 and table.find(e_, E.Name) then
+            f1 = false
         end
-        if fE then
-            L:Destroy()
+        if f1 then
+            E:Destroy()
         end
     end
 end
 do
-    function getBoundingBox(bp)
-        local fF = bp.Size
-        local fG = bp.Position - fF / 2
-        local fH = bp.Position + fF / 2
-        return fG, fH
+    function getBoundingBox(b2)
+        local f3 = b2.Size
+        local f4 = b2.Position - f3 / 2
+        local f5 = b2.Position + f3 / 2
+        return f4, f5
     end
-    function getClosestPointOnAABB(fI, fG, fH)
-        local fJ = Vector3.new(math.clamp(fI.X, fG.X, fH.X), math.clamp(fI.Y, fG.Y, fH.Y), math.clamp(fI.Z, fG.Z, fH.Z))
-        return fJ
+    function getClosestPointOnAABB(f6, f4, f5)
+        local f7 = Vector3.new(math.clamp(f6.X, f4.X, f5.X), math.clamp(f6.Y, f4.Y, f5.Y), math.clamp(f6.Z, f4.Z, f5.Z))
+        return f7
     end
-    function getClosestPointAndDistance(fK, fL)
-        if not fK or not fL then
+    function getClosestPointAndDistance(f8, f9)
+        if not f8 or not f9 then
             return math.huge, nil
         end
-        local fM = fK.Position
-        local fG, fH = getBoundingBox(fL)
-        local fJ = getClosestPointOnAABB(fM, fG, fH)
-        local fN = (fJ - fM).Magnitude
-        return fN, fJ
+        local fa = f8.Position
+        local f4, f5 = getBoundingBox(f9)
+        local f7 = getClosestPointOnAABB(fa, f4, f5)
+        local fb = (f9.Position - f7).Unit
+        f7 = f7 + fb * 0.1
+        if Toggles.Autofarm.Value and isRangedClass() then
+            local fc = 1.651
+            local fd = (at[f9.Parent.Name] or 0) + (bG[aM].AttackPointAdjustment or 0) + -((fc - f8.Size.Y) * 3)
+            if olympus and Options.testOffset.Value ~= fd and Toggles.autosetTestOffset.Value then
+                Options.testOffset:SetValue(fd)
+            end
+            f7 = f7 + Vector3.new(0, olympus and Options.testOffset.Value or fd, 0)
+        end
+        local fe = (f7 - fa).Magnitude
+        return fe, f7
     end
-    function getClosestMob(fO)
-        local fP = math.huge
-        local fQ, fJ, fR, a7, aa
-        local eo, fS, e3
-        if fO and isAlive(fO) then
-            local fT = fO.PrimaryPart
-            local fN, fU = getClosestPointAndDistance(aO, fT)
-            fP, fJ, fQ = fN, fU, fT
+    function getClosestMob(ff)
+        local fg = math.huge
+        local fh, f7, fi, a0, a3
+        local dQ, fj, dv
+        if ff and isAlive(ff) then
+            local fk = ff.PrimaryPart
+            local fe, fl = getClosestPointAndDistance(aw, fk)
+            fg, f7, fh = fe, fl, fk
         else
-            for db, bs in bd:GetChildren() do
-                if isAlive(bs) and not ignoreIfNotAlone(bs.Name) then
-                    local fT = bs.PrimaryPart
-                    local fN, fU = getClosestPointAndDistance(aO, fT)
-                    if fN < fP then
-                        fP, fJ, fQ = fN, fU, fT
+            for aj, b4 in aS:GetChildren() do
+                if isAlive(b4) and not ignoreIfNotAlone(b4.Name) then
+                    local fk = b4.PrimaryPart
+                    local fe, fl = getClosestPointAndDistance(aw, fk)
+                    if fe < fg then
+                        fg, f7, fh = fe, fl, fk
                     end
                 end
             end
         end
-        if fQ then
-            eo, fS, e3 = Mob(fQ.Parent.Name), fQ.Parent.HealthProperties.Health, fQ.Parent.Name
-            a7 = fQ.Position
-            fR = (aO.Position - a7).magnitude
-            aa = eo and eo["BossTag"] or table.find(aL, e3)
+        if fh then
+            dQ, fj, dv = Mob(fh.Parent.Name), fh.Parent.HealthProperties.Health, fh.Parent.Name
+            a0 = fh.Position
+            fi = (aw.Position - a0).magnitude
+            a3 = dQ and dQ["BossTag"]
         end
-        return fQ, fJ, a7, fP, fR, aa, fS
+        return fh, f7, a0, fg, fi, a3, fj
     end
-    function equipWepWithId(fV, dX)
-        for K, L in bE:GetChildren() do
-            if L:FindFirstChild("ID") and L.ID.Value and L.ID.Value == fV then
-                bL:FireServer(L, aZ)
-                libNoti("Equipped " .. bJ[L.Name].DisplayKey .. " for" .. dX)
+    function equipWepWithId(fm, dn)
+        for n, E in be:GetChildren() do
+            if E:FindFirstChild("ID") and E.ID.Value and E.ID.Value == fm then
+                bl:FireServer(E, aH)
+                libNoti("Equipped " .. bj[E.Name].DisplayKey .. " for" .. dn)
                 break
             end
         end
     end
 end
-local fW = {"CorruptedGreaterTree"}
-function ignoreIfNotAlone(e3)
-    if b7 and b7 > 1 and table.find(fW, e3) then
+local fn = {"CorruptedGreaterTree"}
+function ignoreIfNotAlone(dv)
+    if aP and aP > 1 and table.find(fn, dv) then
         return true
     end
 end
 Toggles.Killaura:OnChanged(
-    function(cM)
-        bm = bm + 1
-        if not cM then
+    function(cd)
+        b0 = b0 + 1
+        if not cd then
             return
         end
-        local fX = b6[ee][ef]
-        ae = tick()
+        a6 = tick()
+        local fo = testing3[600]
         task.spawn(
             function()
-                local fY
-                while Toggles.Killaura.Value and aw do
-                    a5, a6, a7, a8, a9, aa, ab = getClosestMob(bQ)
-                    if alive() and a5 then
+                local fp
+                while Toggles.Killaura.Value do
+                    Z, _, a0, a1, a2, a3, a4 = getClosestMob(bq)
+                    if alive() and Z then
                         task.spawn(
                             function()
-                                if not fY then
-                                    fY = true
-                                    if Toggles.PerkSwitcher.Value and cd[b3].Offhand then
-                                        local fZ = OffhandPerksActive()
-                                        if aa and not fZ then
+                                if not fp then
+                                    fp = true
+                                    if Toggles.PerkSwitcher.Value and bG[aM].Offhand then
+                                        local fq = OffhandPerksActive()
+                                        if a3 and not fq then
                                             SwitchOffhandPerks(true)
                                         end
-                                        if not aa and fZ then
+                                        if not a3 and fq then
                                             SwitchOffhandPerks(false)
                                         end
                                     end
-                                    local f_ = aZ:GetChildren()[1]
-                                    if f_ and f_:FindFirstChild("ID") and f_.ID.Value then
-                                        local g0 = f_.ID.Value
-                                        local g1 =
+                                    local fr = aH:GetChildren()[1]
+                                    if fr and fr:FindFirstChild("ID") and fr.ID.Value then
+                                        local fs = fr.ID.Value
+                                        local ft =
                                             Options.mobWepId.Value and #Options.mobWepId.Value > 2 and
                                             Options.mobWepId.Value
-                                        local g2 =
+                                        local fu =
                                             Options.bossWepId.Value and #Options.bossWepId.Value > 2 and
                                             Options.bossWepId.Value
-                                        if g1 and not aa and g0 ~= g1 then
-                                            equipWepWithId(g1, " Mobs!")
+                                        if ft and not a3 and fs ~= ft then
+                                            equipWepWithId(ft, " Mobs!")
                                             task.wait(0.5)
                                         end
-                                        if g2 and aa and g0 ~= g2 then
-                                            equipWepWithId(g2, " Bosses!")
+                                        if fu and a3 and fs ~= fu then
+                                            equipWepWithId(fu, " Bosses!")
                                             task.wait(0.5)
                                         end
                                     end
-                                    fY = false
+                                    fp = false
                                 end
                             end
                         )
                         if not mounted() then
-                            for db, g3 in cd[b3].Skills do
-                                local g4, g5 = g3.MeleeOnBoss and aa and "Melee" or g3.Type or cd[b3].Type, g3.Skill
-                                local g6 = g3.MeleeOnBoss and aa and g3.BossRange or g3.Range or cd[b3].Range
-                                local g7, g8 = g3.Cooldown + Options.KillauraDelay.Value, g4 == "Ranged" and aa
-                                local g9, fN = g8 and a7 or a8 > 0 and a6 or a7, g8 and a9 or a8
-                                if tick() - (g3.LastUsed or 0) >= g7 then
-                                    if g4 ~= "Heal" and fN <= g6 and ab.Value > 0 then
-                                        if g4 == "Melee" then
-                                            bc:FireServer(g5, aO.Position, (g9 - aO.Position).Unit, 66)
-                                        elseif g4 == "Ranged" then
-                                            bc:FireServer(g5, g9, nil, 66)
-                                        elseif g4 == "Self" then
-                                            bc:FireServer(g5, aO.Position, nil, 66)
-                                        elseif g4 == "Remote" then
-                                            if g3.Args == "MobPosition" then
-                                                g5:FireServer(a7, nil, nil, 66)
-                                            elseif g3.Args == "mobTbl" then
-                                                g5:FireServer({a5.Parent}, nil, nil, 66)
+                            for aj, fv in bG[aM].Skills do
+                                local fw, fx = fv.MeleeOnBoss and a3 and "Melee" or fv.Type or bG[aM].Type, fv.Skill
+                                local fy = fv.MeleeOnBoss and a3 and fv.BossRange or fv.Range or bG[aM].Range
+                                local fz = fv.Cooldown + Options.KillauraDelay.Value
+                                if tick() - (fv.LastUsed or 0) >= fz then
+                                    if fw ~= "Heal" and a1 <= fy and a4.Value > 0 then
+                                        if fw == "Melee" then
+                                            aR:FireServer(fx, aw.Position, (_ - aw.Position).Unit, fo)
+                                        elseif fw == "Ranged" then
+                                            aR:FireServer(fx, _, nil, fo)
+                                        elseif fw == "Self" then
+                                            aR:FireServer(fx, aw.Position, nil, fo)
+                                        elseif fw == "Remote" then
+                                            if fv.Args == "MobPosition" then
+                                                fx:FireServer(a0, nil, nil, fo)
+                                            elseif fv.Args == "mobTbl" then
+                                                fx:FireServer({Z.Parent}, nil, nil, fo)
                                             else
-                                                g5:FireServer(nil, nil, nil, 66)
+                                                fx:FireServer(nil, nil, nil, fo)
                                             end
                                         end
-                                        g3.LastUsed = tick()
-                                        ae = tick()
+                                        fv.LastUsed = tick()
+                                        a6 = tick()
                                     end
-                                    if g4 == "Heal" and aP.Health.Value / aP.MaxHealth.Value < 0.6 then
-                                        g5:FireServer(g3.Args or nil, nil, nil, 66)
-                                        g3.LastUsed = tick()
+                                    if fw == "Heal" and ax.Health.Value / ax.MaxHealth.Value < 0.6 then
+                                        fx:FireServer(fv.Args or nil, nil, nil, fo)
+                                        fv.LastUsed = tick()
                                     end
                                 end
                             end
@@ -4137,35 +4165,35 @@ Toggles.Killaura:OnChanged(
                 end
             end
         )
-        if aw and not ar:FindFirstChild(36) and aw then
+        if ai and ag ~= 36 then
             task.spawn(
                 function()
                     while Toggles.Killaura.Value do
-                        for K, L in aq:GetChildren() do
-                            local e7 = L:FindFirstChild("HealthProperties", true)
-                            if e7 and not table.find(c1, e7.Parent.Name) then
-                                table.insert(aM, e7.Parent)
-                                e7.Parent.Parent = bd
+                        for n, E in ae:GetChildren() do
+                            local o = E:FindFirstChild("HealthProperties", true)
+                            if o and not table.find(bz, o.Parent.Name) then
+                                table.insert(au, o.Parent)
+                                o.Parent.Parent = aS
                             end
                         end
-                        task.wait(0.3333)
+                        task.wait(0.5)
                     end
                 end
             )
         end
-        if classCheck(ee) and Toggles.Killaura.Value and bloodBindingEnabled and aw then
+        if classCheck("Demon") and Toggles.Killaura.Value and bloodBindingEnabled and ai then
             task.spawn(
                 function()
                     while Toggles.Killaura.Value do
-                        if classCheck(ee) then
+                        if classCheck("Demon") then
                             if
-                                alive() and not mounted() and not aN:FindFirstChild("AttackBuffDemonBloodBinding", true) and
-                                    a5 and
-                                    a8 and
-                                    a8 <= 95
+                                alive() and not mounted() and not av:FindFirstChild("AttackBuffDemonBloodBinding", true) and
+                                    Z and
+                                    a1 and
+                                    a1 <= 95
                              then
-                                b6.Demon.BloodBinding:FireServer()
-                                ae = tick()
+                                aO.Demon.BloodBinding:FireServer()
+                                a6 = tick()
                                 task.wait(6)
                             end
                         end
@@ -4174,51 +4202,51 @@ Toggles.Killaura:OnChanged(
                 end
             )
         end
-        if classCheck("Summoner") and Toggles.Killaura.Value and aw then
+        if classCheck("Summoner") and Toggles.Killaura.Value and ai then
             task.spawn(
                 function()
                     while Toggles.Killaura.Value do
-                        for db, Mob in bd:GetChildren() do
+                        for aj, Mob in aS:GetChildren() do
                             if Mob.Name == "SummonerSummonWeak" or Mob.Name == "SummonerSummonStrong" then
-                                Mob.Parent = ce
+                                Mob.Parent = bH
                             end
                         end
-                        for db, ga in ce:GetChildren() do
-                            if ga.PrimaryPart then
-                                if a5 then
-                                    ga.PrimaryPart.CFrame = CFrame.new(a7)
+                        for aj, fA in bH:GetChildren() do
+                            if fA.PrimaryPart then
+                                if Z then
+                                    fA.PrimaryPart.CFrame = CFrame.new(a0)
                                 end
                                 if
-                                    ga:FindFirstChild("HealthProperties") and
-                                        ga.HealthProperties:FindFirstChild("Health") and
-                                        ga.HealthProperties.Health.Value > 0 and
-                                        ga.HealthProperties.Health.Value / ga.HealthProperties.MaxHealth.Value <= 0.25
+                                    fA:FindFirstChild("HealthProperties") and
+                                        fA.HealthProperties:FindFirstChild("Health") and
+                                        fA.HealthProperties.Health.Value > 0 and
+                                        fA.HealthProperties.Health.Value / fA.HealthProperties.MaxHealth.Value <= 0.25
                                  then
-                                    b6.Summoner.ExplodeSummons:FireServer()
+                                    aO.Summoner.ExplodeSummons:FireServer()
                                 end
                             end
                         end
-                        bS:Wait()
+                        bs:Wait()
                     end
                 end
             )
         end
-        if aw then
+        if ai then
             task.spawn(
                 function()
-                    while Toggles.Killaura.Value and not aK do
-                        if Toggles.Autofarm.Value and not bP then
+                    while Toggles.Killaura.Value and not as do
+                        if Toggles.Autofarm.Value and not bp then
                             task.wait(0.5)
-                            if tick() - ae >= Options.timeoutTimer.Value then
-                                local gb = Options.Offset.Value
+                            if tick() - a6 >= Options.timeoutTimer.Value then
+                                local fB = Options.Offset.Value
                                 Options.Offset:SetValue(0)
                                 task.wait(3)
-                                if tick() - ae >= Options.timeoutTimer.Value then
+                                if tick() - a6 >= Options.timeoutTimer.Value then
                                     libNoti("Timeout! Force restarting dungeon!")
                                     missionEndRestartOrNextEvent()
                                     break
                                 else
-                                    Options.Offset:SetValue(gb)
+                                    Options.Offset:SetValue(fB)
                                 end
                             end
                         end
@@ -4234,11 +4262,11 @@ Toggles.CollectDrops:OnChanged(
         task.spawn(
             function()
                 while Toggles.CollectDrops.Value do
-                    for gc, gd in aS do
-                        gd.model:Destroy()
-                        gd.followPart:Destroy()
-                        table.remove(aS, gc)
-                        aT:FireServer(gd.id)
+                    for fC, fD in aA do
+                        fD.model:Destroy()
+                        fD.followPart:Destroy()
+                        table.remove(aA, fC)
+                        aB:FireServer(fD.id)
                     end
                     task.wait()
                 end
@@ -4247,49 +4275,49 @@ Toggles.CollectDrops:OnChanged(
     end
 )
 Toggles.autoEquipBestwWep:OnChanged(
-    function(cM)
-        if not cM then
+    function(cd)
+        if not cd then
             return
         end
         task.spawn(
             function()
                 while Toggles.autoEquipBestwWep.Value do
-                    local ge, gf = 0, 0
-                    local gg, gh
-                    local f_ = aZ:GetChildren()[1]
-                    if f_ then
-                        ge = bK:GetItemStats(f_)["Attack"] or 0
+                    local fE, fF = 0, 0
+                    local fG, fH
+                    local fr = aH:GetChildren()[1]
+                    if fr then
+                        fE = bk:GetItemStats(fr)["Attack"] or 0
                     end
-                    local gi, gj = 0, 0
-                    local gk, gl
-                    local gm = b0:GetChildren()[1]
-                    if gm then
-                        gi = bK:GetItemStats(gm)["Defense"] or 0
+                    local fI, fJ = 0, 0
+                    local fK, fL
+                    local fM = aJ:GetChildren()[1]
+                    if fM then
+                        fI = bk:GetItemStats(fM)["Defense"] or 0
                     end
-                    for K, L in bE:GetChildren() do
-                        if L:FindFirstChild("Level") and L.Level.Value <= aU.Level.Value then
-                            local gn = bJ[L.Name]
-                            local go, gp = gn.Type == "Weapon", gn.Type == "Armor"
-                            local gq, gr = go and bK:GetItemStats(L)["Attack"], gp and bK:GetItemStats(L)["Defense"]
-                            if go and gq and gq > ge and gq > gf then
-                                gg = L
-                                gf = gq
-                                gh = gn.DisplayKey
+                    for n, E in be:GetChildren() do
+                        if E:FindFirstChild("Level") and E.Level.Value <= aC.Level.Value then
+                            local fN = bj[E.Name]
+                            local fO, fP = fN.Type == "Weapon", fN.Type == "Armor"
+                            local fQ, fR = fO and bk:GetItemStats(E)["Attack"], fP and bk:GetItemStats(E)["Defense"]
+                            if fO and fQ and fQ > fE and fQ > fF then
+                                fG = E
+                                fF = fQ
+                                fH = fN.DisplayKey
                             end
-                            if gp and gr and gr > gi and gr > gj then
-                                gk = L
-                                gj = gr
-                                gl = gn.DisplayKey
+                            if fP and fR and fR > fI and fR > fJ then
+                                fK = E
+                                fJ = fR
+                                fL = fN.DisplayKey
                             end
                         end
                     end
-                    if gg then
-                        libNoti("Equipped a T" .. bT:GetItemTier(gg) .. " " .. gh .. " - Power: " .. gf)
-                        bL:FireServer(gg, aZ)
+                    if fG then
+                        libNoti("Equipped a T" .. bt:GetItemTier(fG) .. " " .. fH .. " - Power: " .. fF)
+                        bl:FireServer(fG, aH)
                     end
-                    if gk then
-                        libNoti("Equipped a T" .. bT:GetItemTier(gk) .. " " .. gl .. " - Defense: " .. gj)
-                        bL:FireServer(gk, b0)
+                    if fK then
+                        libNoti("Equipped a T" .. bt:GetItemTier(fK) .. " " .. fL .. " - Defense: " .. fJ)
+                        bl:FireServer(fK, aJ)
                     end
                     task.wait(2)
                 end
@@ -4297,60 +4325,87 @@ Toggles.autoEquipBestwWep:OnChanged(
         )
     end
 )
-local cb = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Effects"))
-local gs = cb.RenderDamageNumber
+local bE = require(game.ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Effects"))
+local fS = bE.RenderDamageNumber
 Toggles.NVD:OnChanged(
     function()
-        cb.RenderDamageNumber = function(...)
+        bE.RenderDamageNumber = function(...)
             if Toggles.NVD.Value then
                 return
             end
-            return gs(...)
+            return fS(...)
         end
     end
 )
 Options.FastSprint:OnChanged(
     function()
-        bM.SPRINT_WALKSPEED = Options.FastSprint.Value
+        bm.SPRINT_WALKSPEED = Options.FastSprint.Value
     end
 )
-ci:SetLibrary(ch)
-cj:SetLibrary(ch)
-cj:IgnoreThemeSettings()
-cj:SetIgnoreIndexes({"MenuKeybind"})
-ci:SetFolder("MyScriptHub")
-cj:SetFolder("MyScriptHub")
-cj:BuildConfigSection(cs["Settings"])
-ci:ApplyToTab(cs["Settings"])
-local gt = cs["Settings"]:AddRightGroupbox("Menu")
-gt:AddButton(
-    "Unload",
-    function()
-        ch:Unload()
+bL:SetLibrary(bK)
+bM:SetLibrary(bK)
+bM:IgnoreThemeSettings()
+bM:SetIgnoreIndexes({"MenuKeybind"})
+bL:SetFolder("Infinite/World Zero")
+bM:SetFolder("Infinite/World Zero")
+bM:BuildConfigSection(bU["Settings"])
+bL:ApplyToTab(bU["Settings"])
+local fT = bU["Settings"]:AddRightGroupbox("Menu")
+fT:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind", {Default = "LeftAlt", NoUI = false, Text = "Menu keybind"})
+bK.ToggleKeybind = Options.MenuKeybind
+fT:AddToggle("Autoexecute", {Text = "Autoexecute", Default = false})
+local fU = isfile("Infinite/World Zero/autoexec") and readfile("Infinite/World Zero/autoexec") == "false"
+Toggles.Autoexecute:OnChanged(
+    function(ba)
+        writefile("Infinite/World Zero/autoexec", tostring(ba))
     end
 )
-gt:AddLabel("Menu bind"):AddKeyPicker("MenuKeybind", {Default = "LeftAlt", NoUI = false, Text = "Menu keybind"})
-ch.ToggleKeybind = Options.MenuKeybind
-local gu = tick()
-while tick() - gu < 60 do
-    if aw then
-        cj:LoadAutoloadConfig()
-        if as and ar:FindFirstChild(24) then
-            if Options.Offset.Value > 45 then
-                Options.Offset:SetValue(45)
-                libNoti("Set offset value to 45 to avoid death")
+if not fU then
+    Toggles.Autoexecute:SetValue(true)
+end
+if ai then
+    Toggles.autoSellAll:OnChanged(
+        function(cd)
+            if not cd then
+                return
+            end
+            repeat
+                task.wait()
+            until MissionStarted or not Toggles.autoSellAll.Value
+            if not Toggles.autoSellAll.Value then
+                return
+            end
+            task.wait(1)
+            local ch = {}
+            for n, E in be:GetChildren() do
+                local ci = bj[E.Name]
+                if
+                    (ci.Type == "Weapon" or ci.Type == "Armor") and Options.AutoSellTbl.Value[bt:GetItemTier(E)] and
+                        not E:FindFirstChild("Locked")
+                 then
+                    table.insert(ch, E)
+                end
+            end
+            if #ch > 0 then
+                libNoti("Sold " .. #ch .. " items")
+                V.Drops.SellItems:InvokeServer(ch)
             end
         end
-        break
+    )
+    bM:LoadAutoloadConfig()
+    if ag == 24 then
+        if Options.Offset.Value > 45 then
+            Options.Offset:SetValue(45)
+            libNoti("Offset set to 45 to avoid death!")
+        end
     end
-    task.wait()
 end
-if Toggles.autoHide.Value and aw then
+if Toggles.autoHide.Value and ai then
     task.wait(0.25)
-    ch:Toggle()
+    bK:Toggle()
 end
 pcall(
     function()
-        a4 = game:GetService("MarketplaceService"):UserOwnsGamePassAsync(d, 8136250)
+        Y = game:GetService("MarketplaceService"):UserOwnsGamePassAsync(userId, 8136250)
     end
 )
